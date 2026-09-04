@@ -1,0 +1,12 @@
+schema: "classroom50/repo-config/v1"
+classroom: "l5-adv-2026-jul"
+assignment: "l5-adv-mission-5-phase-2"
+owner:
+  username: "RodrigoNunes2004"
+  id: 62618446
+  accepted_at: "2026-09-04T00:04:08Z"
+source:
+  owner: "Mission-Ready"
+  owner_id: 91437324
+  repo: "l5-adv-mission-5-phase2"
+  branch: "main"
