@@ -35,5 +35,9 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
+    watch: {
+      usePolling: true,
+      interval: 300,
+    },
   },
 });
