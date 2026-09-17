@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap");
 @import "tailwindcss";
 
 @theme {
@@ -13,4 +14,21 @@
 html, body, #root {
   margin: 0;
   min-height: 100%;
+}
+
+.hero-gradient {
+  background: linear-gradient(180deg, #ff6a00 0%, #ff8c1a 55%, #ffb347 100%);
+}
+
+.find-hero-gradient {
+  background: linear-gradient(90deg, #ff6a00 0%, #ff8c1a 55%, #ffb347 100%);
+}
+
+.map-gradient {
+  background: linear-gradient(
+    90deg,
+    #ff6a00 0%,
+    rgba(255, 140, 26, 0.88) 50%,
+    rgba(255, 179, 71, 0.35) 100%
+  );
 }
