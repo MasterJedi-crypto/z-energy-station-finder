@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --color-z-orange: #ff5a00;
+  --color-z-navy: #1e196a;
+  --color-z-ink: #2b2b2b;
+  --color-z-muted: #5c5c5c;
+  --color-z-peach: #ffe1cc;
+  --color-z-card: #fff8f3;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 72px;
+}
+
+@media (min-width: 1024px) {
+  html {
+    scroll-padding-top: 120px;
+  }
+
+  html,
+  body,
+  #root {
+    background: #fff;
+  }
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+  background: #f4f4f4;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-z-ink);
+}
+
+button {
+  font-family: inherit;
+}
+
+.hero-gradient {
+  background: linear-gradient(180deg, #ff6a00 0%, #ff8c1a 55%, #ffb347 100%);
+}
+
+.find-hero-gradient {
+  background: linear-gradient(90deg, #eb4f10 12.5%, #f06f12 53.365%, #ffa53b 100%);
+}
+
+.map-gradient {
+  background:
+    linear-gradient(180deg, rgba(255, 90, 0, 0.55) 0%, rgba(255, 140, 20, 0.35) 42%, rgba(255, 176, 70, 0.2) 100%),
+    linear-gradient(90deg, rgba(255, 90, 0, 0.7) 0%, rgba(255, 140, 30, 0.25) 100%);
+}

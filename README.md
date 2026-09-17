@@ -1,22 +1,16 @@
-# Level 5 ADV Mission 5 Phase 2 Readme
+# React + Vite
 
-Replace me with an introduction to the project.
+This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
-## Installation
+Currently, two official plugins are available:
 
-Replace me with the package manager you are using.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-Explaining how to install the project.
+## React Compiler
 
-```bash
-npm install
-npm start
-```
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## More Details
+## Expanding the Oxlint configuration
 
-Replace me with more details about the project.
-
-## Contributors
-
-Replace me with the contributors of the project and their GitHub profiles.
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
