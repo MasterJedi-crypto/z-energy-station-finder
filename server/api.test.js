@@ -9,3 +9,14 @@ describe("GET /health", () => {
     expect(response.body).toEqual({ ok: true });
   });
 });
+
+describe("GET /geocode", () => {
+  it("returns known NZ places when the query is empty", async () => {
+  
+    const response = await request(app).get("/geocode");
+    expect(response.status).toBe(200);
+   expect(Array.isArray(response.body)).toBe(true);
+expect(response.body.length).toBeGreaterThan(0);
+  });
+});
+

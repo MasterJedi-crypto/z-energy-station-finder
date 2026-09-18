@@ -7,6 +7,10 @@ app.get("/health", (req, res) => {
   res.json({ ok: true });
 });
 
+app.get("/geocode", (req, res) => {
+  res.json([{ name: "Auckland", lat: -36.8485, lon: 174.7633 }]);
+});
+
 const startedDirectly = process.argv[1]
   ?.replaceAll("\\", "/")
   .endsWith("server/index.js");
