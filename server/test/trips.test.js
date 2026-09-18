@@ -74,3 +74,47 @@ describe("POST /trips", () => {
     expect(inserted[0].createdAt).toBeInstanceOf(Date);
   });
 });
+
+describe("DELETE /trips/:id", () => {
+  const tripId = "64b7f0c2a1b2c3d4e5f60718";
+
+  it("returns 400 when userId is missing", async () => {
+    const app = makeApp({});
+    const response = await request(app).delete(`/trips/${tripId}`);
+    expect(response.status).toBe(400);
+  });
+
+  it("returns 400 when the id is not valid", async () => {
+    const app = makeApp({});
+    const response = await request(app).delete("/trips/abc?userId=user1");
+    expect(response.status).toBe(400);
+  });
+
+  it("deletes only the trip that belongs to the user", async () => {
+    const calls = [];
+    const fakeCollection = {
+      deleteOne: async (filter) => {
+        calls.push(filter);
+        return { deletedCount: 1 };
+      },
+    };
+
+    const app = makeApp(fakeCollection);
+    const response = await request(app).delete(`/trips/${tripId}?userId=user1`);
+
+    expect(response.status).toBe(200);
+    expect(calls[0].userId).toBe("user1");
+    expect(calls[0]._id.toString()).toBe(tripId);
+  });
+
+  it("returns 404 when no matching trip was found", async () => {
+    const fakeCollection = {
+      deleteOne: async () => ({ deletedCount: 0 }),
+    };
+
+    const app = makeApp(fakeCollection);
+    const response = await request(app).delete(`/trips/${tripId}?userId=user1`);
+
+    expect(response.status).toBe(404);
+  });
+});
