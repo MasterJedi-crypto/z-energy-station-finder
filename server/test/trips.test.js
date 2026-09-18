@@ -6,7 +6,7 @@ import { createTripsRouter } from "../routes/trips.js";
 function makeApp(collection) {
   const app = express();
   app.use(express.json());
-  app.use("/trips", createTripsRouter(collection));
+  app.use("/trips", createTripsRouter(() => collection));
   return app;
 }
 
@@ -75,6 +75,8 @@ describe("POST /trips", () => {
     expect(inserted[0].selectedStationIds).toEqual(["z-geraldine"]);
   });
 });
+
+// DELETE test
 
 describe("DELETE /trips/:id", () => {
   const tripId = "64b7f0c2a1b2c3d4e5f60718";
