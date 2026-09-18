@@ -8,7 +8,8 @@ export function createTripsRouter(collection) {
     if (!userId) {
       return res.status(400).json({ ok: false, error: "userId is required." });
     }
-    res.json({ ok: true, trips: [] });
+    const trips = await collection.find({ userId }).toArray();
+    res.json({ ok: true, trips });
   });
 
   return router;
