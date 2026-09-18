@@ -18,5 +18,10 @@ describe("GET /geocode", () => {
    expect(Array.isArray(response.body)).toBe(true);
 expect(response.body.length).toBeGreaterThan(0);
   });
+  it("returns Wellington when searched", async () => {
+  const response = await request(app).get("/geocode?q=Wellington");
+  expect(response.status).toBe(200);
+  expect(response.body[0].name).toContain("Wellington");
+});
 });
 
