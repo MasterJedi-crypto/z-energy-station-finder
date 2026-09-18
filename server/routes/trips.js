@@ -23,7 +23,7 @@ export function createTripsRouter(collection) {
         stops: req.body.stops ?? [],
         origin: req.body.origin ?? null,
         destination: req.body.destination ?? null,
-        selectedStationsIds: req.body.selectedStationsIds ?? [],
+        selectedStationIds: req.body.selectedStationIds ?? [],
         distanceKm: req.body.distanceKm ?? null,
         durationLabel: req.body.durationLabel ?? null,
         createdAt: new Date(),  

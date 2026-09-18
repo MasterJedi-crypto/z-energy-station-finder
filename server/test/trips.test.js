@@ -66,12 +66,13 @@ describe("POST /trips", () => {
     const app = makeApp(fakeCollection);
     const response = await request(app)
       .post("/trips")
-      .send({ userId: "user1", from: "Christchurch", to: "Timaru" });
+      .send({ userId: "user1", from: "Christchurch", to: "Timaru", selectedStationIds: ["z-geraldine"] });
 
     expect(response.status).toBe(201);
     expect(response.body.id).toBe("trip-1");
     expect(inserted[0].userId).toBe("user1");
     expect(inserted[0].createdAt).toBeInstanceOf(Date);
+    expect(inserted[0].selectedStationIds).toEqual(["z-geraldine"]);
   });
 });
 
