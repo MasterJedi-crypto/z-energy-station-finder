@@ -11,17 +11,19 @@ app.get("/health", (req, res) => {
   res.json({ ok: true });
 });
 app.get("/geocode", (req, res) => {
-  const query = req.query.q?.toLowerCase();
+  const query = String(req.query.q ?? "").trim().toLowerCase();
 
   const places = [
-    { name: "Auckland", lat: -36.8485, lon: 174.7633 },
-    { name: "Wellington", lat: -41.2865, lon: 174.7762 },
-    { name: "Christchurch", lat: -43.5321, lon: 172.6362 },
+    { label: "Auckland", lat: -36.8485, lng: 174.7633 },
+    { label: "Wellington", lat: -41.2865, lng: 174.7762 },
+    { label: "Christchurch", lat: -43.5321, lng: 172.6362 },
   ];
 
-  res.json(query ? places.filter(place =>
-    place.name.toLowerCase().includes(query)
-  ) : places);
+  const results = query
+    ? places.filter((place) => place.label.toLowerCase().includes(query))
+    : places;
+
+  res.json({ ok: true, places: results });
 });
 
 app.use("/trips", createTripsRouter(() => getDb().collection("saved-trips")));
