@@ -12,6 +12,7 @@ import {
   ZBusinessRegister,
 } from "./components/auth/LoginPages";
 import { clearSession, getSession, headerDisplayName, updateAvatar } from "./auth";
+import { FindStation } from "./components/find-station/FindStation";
 
 const authPages = new Set([
   "ev-fleet",
@@ -36,7 +37,12 @@ function App() {
   );
   const goHome = () => setPage("home");
   // Step 3: Siobhan (Find a station) and Koni (Plan a trip) replace these.
-  const goFindStation = () => setPage("home");
+  const goFindStation = () => {
+  setMenuOpen(false);
+  setSearchOpen(false);
+  setPage("find-station");
+};
+
   const goPlanTrip = () => setPage("home");
   const completeLogin = (nextSession) => {
     setSession(nextSession);
@@ -152,11 +158,18 @@ function App() {
           audience={audience}
           onAudienceChange={setAudience}
         />
-        <Hero onFindStation={goFindStation} />
-        <NewsCard />
-        <Services />
-        <MapSection onFindStation={goFindStation} />
-        <Features />
+        {page === "find-station" ? (
+  <FindStation />
+) : (
+  <>
+    <Hero onFindStation={goFindStation} />
+    <NewsCard />
+    <Services />
+    <MapSection onFindStation={goFindStation} />
+    <Features />
+    </>
+)}
+
         <Footer />
         <BurgerMenu
           open={menuOpen}
