@@ -93,6 +93,23 @@ export function SearchIcon({ className = "size-6" }) {
       </svg>
     );
   }
+  export function CameraIcon({ className = "size-3" }) {
+    return (
+      <svg
+        className={className}
+        viewBox="0 0 24 24"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path
+          d="M4 8.5A2.5 2.5 0 0 1 6.5 6h2.1l.7-1.2A1.5 1.5 0 0 1 10.6 4h2.8a1.5 1.5 0 0 1 1.3.8L15.4 6h2.1A2.5 2.5 0 0 1 20 8.5v7A2.5 2.5 0 0 1 17.5 18h-11A2.5 2.5 0 0 1 4 15.5v-7Z"
+          stroke="currentColor"
+          strokeWidth="1.8"
+        />
+        <circle cx="12" cy="12" r="3.2" stroke="currentColor" strokeWidth="1.8" />
+      </svg>
+    );
+  }
   export function CloseIcon({ className = "size-6" }) {
     return (
       <svg
