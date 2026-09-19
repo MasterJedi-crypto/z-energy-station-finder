@@ -56,6 +56,20 @@ function AuthMessage({ error, success }) {
   );
 }
 
+function ChargingAuthHeader() {
+  return (
+    <header className="flex shrink-0 items-start bg-[linear-gradient(90deg,#EB4F10_22.6%,#F57825_50%,#FFA53B_84.13%)] p-[0_0_84px_233px]">
+      <img
+        src="/images/z-header-mark.png"
+        alt="Z Energy"
+        width={95}
+        height={96}
+        className="h-[96px] w-[95px] shrink-0 [aspect-ratio:95/96] object-cover"
+      />
+    </header>
+  );
+}
+
 function ZBusinessChrome({ title, children, onHome }) {
   return (
     <div className="flex min-h-screen flex-col bg-white">
@@ -120,9 +134,7 @@ export function EvFleetLogin({ onHome, onForgot, onRegister, onSignedIn, account
 
   return (
     <div className="flex min-h-screen flex-col bg-[#f7f7f7]">
-      <header className="flex h-[88px] items-center bg-[linear-gradient(90deg,#eb4f10_0%,#f06f12_52%,#ffa53b_100%)] px-6 lg:px-10">
-        <Logo className="h-14 w-14" />
-      </header>
+      <ChargingAuthHeader />
       <main className="flex flex-1 flex-col items-center px-6 pt-16 pb-10">
         <form
           className="w-full max-w-[420px] rounded-[18px] bg-white px-8 py-8 shadow-[0_12px_40px_rgba(0,0,0,0.08)]"
@@ -564,10 +576,11 @@ export function ForgotPassword({ variant = "business", onHome, onBack }) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [busy, setBusy] = useState(false);
+  const ev = variant === "ev";
 
   const form = (
     <form
-      className={variant === "business" ? "mt-8 w-full max-w-[360px]" : "w-full"}
+      className={ev ? "mt-8 w-full" : "mt-8 w-full max-w-[360px]"}
       onSubmit={async (event) => {
         event.preventDefault();
         setBusy(true);
@@ -575,6 +588,7 @@ export function ForgotPassword({ variant = "business", onHome, onBack }) {
         setSuccess("");
         const result = await resetPassword({
           email,
+          userId: email,
           password,
           confirmPassword,
         });
@@ -588,53 +602,50 @@ export function ForgotPassword({ variant = "business", onHome, onBack }) {
         setConfirmPassword("");
       }}
     >
-      {variant === "business" ? (
+      {ev ? null : (
         <p className="mb-5 text-[14px] leading-relaxed text-[#555]">
           Enter your email and choose a new password.
         </p>
-      ) : null}
-      <label
-        className={`block text-[14px] ${variant === "ev" ? "font-bold text-[#2b2b2b]" : "text-[#333]"}`}
-        htmlFor={`${variant}-forgot-email`}
-      >
-        {variant === "ev" ? "Email Address" : "Email:"}
+      )}
+      <label className="block text-[14px] text-[#333]" htmlFor={`${variant}-forgot-email`}>
+        {ev ? "User ID" : "Email:"}
       </label>
       <input
         id={`${variant}-forgot-email`}
-        type="email"
+        type="text"
         value={email}
         autoComplete="username"
         onChange={(event) => setEmail(event.target.value)}
         autoFocus
         className={
-          variant === "ev"
-            ? "mt-2 h-[46px] w-full rounded-[8px] border border-[#d9d9d9] px-3 text-[15px] outline-none focus:border-[#F26522]"
+          ev
+            ? "mt-1 h-[40px] w-full rounded-[6px] border-[2px] border-[#F26522] px-3 text-[15px] outline-none"
             : "mt-1 h-[36px] w-full border-[3px] border-[#F26522] px-2 text-[15px] outline-none"
         }
       />
       <PasswordField
         id={`${variant}-forgot-password`}
-        label={variant === "ev" ? "New password" : "New password:"}
+        label={ev ? "New password" : "New password:"}
         value={password}
         onChange={setPassword}
         autoComplete="new-password"
         className="mt-4"
         inputClassName={
-          variant === "ev"
-            ? "mt-2 h-[46px] rounded-[8px] border border-[#d9d9d9] px-3 text-[15px] focus:border-[#F26522]"
+          ev
+            ? "mt-1 h-[40px] rounded-[6px] border border-[#cfcfcf] px-3 text-[15px] focus:border-[#F26522]"
             : "mt-1 h-[36px] border border-[#cfcfcf] px-2 text-[15px] focus:border-[#F26522]"
         }
       />
       <PasswordField
         id={`${variant}-forgot-confirm`}
-        label={variant === "ev" ? "Confirm new password" : "Confirm new password:"}
+        label={ev ? "Confirm new password" : "Confirm new password:"}
         value={confirmPassword}
         onChange={setConfirmPassword}
         autoComplete="new-password"
         className="mt-4"
         inputClassName={
-          variant === "ev"
-            ? "mt-2 h-[46px] rounded-[8px] border border-[#d9d9d9] px-3 text-[15px] focus:border-[#F26522]"
+          ev
+            ? "mt-1 h-[40px] rounded-[6px] border border-[#cfcfcf] px-3 text-[15px] focus:border-[#F26522]"
             : "mt-1 h-[36px] border border-[#cfcfcf] px-2 text-[15px] focus:border-[#F26522]"
         }
       />
@@ -643,22 +654,14 @@ export function ForgotPassword({ variant = "business", onHome, onBack }) {
         <button
           type="button"
           onClick={onBack}
-          className={
-            variant === "ev"
-              ? "text-[13px] font-semibold text-[#1E196A] underline"
-              : "text-[13px] text-[#888] hover:text-[#F26522]"
-          }
+          className="text-[13px] text-[#888] hover:text-[#F26522]"
         >
-          {variant === "ev" ? "Back to Sign In" : "▸ Back to Login"}
+          ▸ Back to Login
         </button>
         <button
           type="submit"
           disabled={busy}
-          className={
-            variant === "ev"
-              ? "inline-flex h-[48px] min-w-[160px] items-center justify-center rounded-[40px] bg-[linear-gradient(90deg,#eb4f10_0%,#f06f12_52%,#ffa53b_100%)] px-6 text-[16px] font-bold text-white disabled:opacity-70"
-              : "inline-flex h-[36px] items-center justify-center rounded-[6px] bg-[#F26522] px-5 text-[13px] font-bold uppercase tracking-wide text-white disabled:opacity-70"
-          }
+          className="inline-flex h-[36px] items-center justify-center rounded-[6px] bg-[#F26522] px-5 text-[13px] font-bold uppercase tracking-wide text-white disabled:opacity-70"
         >
           {busy ? "Saving…" : "Reset password"}
         </button>
@@ -666,27 +669,20 @@ export function ForgotPassword({ variant = "business", onHome, onBack }) {
     </form>
   );
 
-  if (variant === "ev") {
+  if (ev) {
     return (
-      <div className="flex min-h-screen flex-col bg-[#f7f7f7]">
-        <header className="flex h-[88px] items-center bg-[linear-gradient(90deg,#eb4f10_0%,#f06f12_52%,#ffa53b_100%)] px-6 lg:px-10">
-          <Logo className="h-14 w-14" />
-        </header>
+      <div className="flex min-h-screen flex-col bg-white">
+        <ChargingAuthHeader />
         <main className="flex flex-1 flex-col items-center px-6 pt-16 pb-10">
-          <div className="w-full max-w-[420px] rounded-[18px] bg-white px-8 py-8 shadow-[0_12px_40px_rgba(0,0,0,0.08)]">
-            <h1 className="text-[32px] font-extrabold text-[#F26522]">Forgot password?</h1>
-            <p className="mt-3 text-[14px] text-[#555]">
-              Enter your email and a new password for your account.
+          <div className="w-full max-w-[560px]">
+            <h1 className="text-center text-[32px] font-extrabold text-[#1B1464]">
+              Forgotten your password?
+            </h1>
+            <p className="mt-4 text-center text-[14px] text-[#555]">
+              Enter your User ID and choose a new password
             </p>
-            <div className="mt-6">{form}</div>
+            <div className="mx-auto w-full max-w-[360px]">{form}</div>
           </div>
-          <button
-            type="button"
-            onClick={onHome}
-            className="mt-6 text-[14px] font-semibold text-[#1E196A] underline"
-          >
-            Return to homepage
-          </button>
         </main>
       </div>
     );
