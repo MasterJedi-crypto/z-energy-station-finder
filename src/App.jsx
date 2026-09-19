@@ -123,7 +123,7 @@ function App() {
         {page === "z-business-register" ? (
           <ZBusinessRegister
             accountType={audience}
-            onHome={goHome}
+             onBack={goHome}
             onBack={() => setPage("z-business-login")}
             onSignedIn={completeLogin}
           />
@@ -159,7 +159,7 @@ function App() {
           onAudienceChange={setAudience}
         />
         {page === "find-station" ? (
-  <FindStation />
+  <FindStation onBack={goHome} />
 ) : (
   <>
     <Hero onFindStation={goFindStation} />
