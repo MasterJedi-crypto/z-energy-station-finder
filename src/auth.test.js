@@ -167,6 +167,23 @@ describe("auth API helpers", () => {
     expect(relogin.ok).toBe(true);
   });
 
+  it("resets a password by userId when the API is offline", async () => {
+    fetch.mockRejectedValue(new Error("offline"));
+    await registerAccount(personalAccount);
+    const reset = await resetPassword({
+      userId: "local-user",
+      password: "secret2",
+      confirmPassword: "secret2",
+    });
+    expect(reset).toEqual({ ok: true });
+    const relogin = await loginAccount({
+      userId: "local-user",
+      password: "secret2",
+      accountType: "personal",
+    });
+    expect(relogin.ok).toBe(true);
+  });
+
   it("stores a business profile on local register", async () => {
     fetch.mockRejectedValue(new Error("offline"));
     const created = await registerAccount({

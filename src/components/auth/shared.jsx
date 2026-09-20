@@ -57,7 +57,7 @@ export function AuthMessage({ error, success }) {
 
 export function ChargingAuthHeader() {
   return (
-    <header className="flex shrink-0 items-start bg-[linear-gradient(90deg,#EB4F10_22.6%,#F57825_50%,#FFA53B_84.13%)] p-[0_0_84px_233px]">
+    <header className="flex shrink-0 items-start bg-[linear-gradient(90deg,#EB4F10_22.6%,#F57825_50%,#FFA53B_84.13%)] px-6 pb-6 lg:p-[0_0_84px_233px]">
       <img
         src="/images/z-header-mark.png"
         alt="Z Energy"

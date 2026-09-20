@@ -19,12 +19,12 @@ export function ForgotPassword({ variant = "business", onHome, onBack }) {
         setBusy(true);
         setError("");
         setSuccess("");
-        const result = await resetPassword({
-          email,
-          userId: email,
-          password,
-          confirmPassword,
-        });
+        const login = email.trim();
+        const result = await resetPassword(
+          ev
+            ? { userId: login, email: login, password, confirmPassword }
+            : { email: login, password, confirmPassword },
+        );
         setBusy(false);
         if (!result.ok) {
           setError(result.error);
@@ -45,7 +45,7 @@ export function ForgotPassword({ variant = "business", onHome, onBack }) {
       </label>
       <input
         id={`${variant}-forgot-email`}
-        type="text"
+        type={ev ? "text" : "email"}
         value={email}
         autoComplete="username"
         onChange={(event) => setEmail(event.target.value)}
@@ -116,6 +116,13 @@ export function ForgotPassword({ variant = "business", onHome, onBack }) {
             </p>
             <div className="mx-auto w-full max-w-[360px]">{form}</div>
           </div>
+          <button
+            type="button"
+            onClick={onHome}
+            className="mt-6 text-[14px] font-semibold text-[#1E196A] underline"
+          >
+            Return to homepage
+          </button>
         </main>
       </div>
     );
