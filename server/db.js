@@ -21,3 +21,12 @@ export function getDb() {
 export function setApiDb(fakeDb) {
   db = fakeDb;
 }
+
+export async function closeDb() {
+  try {
+    if (client) await client.close();
+  } finally {
+    client = undefined;
+    db = undefined;
+  }
+}
