@@ -1,6 +1,7 @@
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Logo } from "./Logo";
-import { ChevronDownIcon, CloseIcon, MenuIcon, SearchIcon } from "./Icons";
+import { CameraIcon, ChevronDownIcon, CloseIcon, MenuIcon, SearchIcon } from "./Icons";
+import { loginMenuOptions } from "../../auth";
 import headerPerson from "../../assets/figma/header-person.svg";
 import headerSearch from "../../assets/figma/header-search.svg";
 
@@ -43,6 +44,46 @@ const desktopMenus = [
   },
 ];
 const hoverLink = "transition-colors hover:text-[#F26522]";
+function AccountAvatar({ src, onUpload, fileRef }) {
+  const innerRef = useRef(null);
+  const inputRef = fileRef || innerRef;
+  return (
+    <span className="relative inline-flex size-10 shrink-0">
+      <img
+        src={src || headerPerson}
+        alt=""
+        width={40}
+        height={40}
+        className="size-10 rounded-full border border-[#d9d9d9] object-cover"
+      />
+      <button
+        type="button"
+        aria-label="Upload profile photo"
+        title="Upload photo"
+        className="absolute -bottom-0.5 -right-0.5 flex size-[18px] items-center justify-center rounded-full border border-white bg-[#F26522] text-white shadow-[0_1px_4px_rgba(0,0,0,0.25)] hover:bg-[#d4551b]"
+        onClick={(event) => {
+          event.stopPropagation();
+          inputRef.current?.click();
+        }}
+      >
+        <CameraIcon className="size-2.5" />
+      </button>
+      {fileRef ? null : (
+        <input
+          ref={innerRef}
+          type="file"
+          accept="image/*"
+          className="sr-only"
+          onChange={(event) => {
+            const file = event.target.files?.[0];
+            event.target.value = "";
+            if (file) onUpload?.(file);
+          }}
+        />
+      )}
+    </span>
+  );
+}
 function DropdownPanel({ items, onClose }) {
   return (
     <div className="absolute left-0 top-full z-40 min-w-[240px] rounded-xl bg-white py-3 shadow-[0_12px_32px_rgba(30,25,106,0.12)]">
@@ -73,18 +114,6 @@ function DropdownPanel({ items, onClose }) {
     </div>
   );
 }
-const loginOptions = [
-  {
-    id: "charging",
-    title: "Business Charging Online",
-    subtitle: "Manage your EV cards",
-  },
-  {
-    id: "business",
-    title: "Z Business Online",
-    subtitle: "Manage your fuel cards",
-  },
-];
 
 export function Header({
   onHome,
@@ -95,9 +124,15 @@ export function Header({
   onOpenChargingLogin,
   onOpenBusinessLogin,
   onLogout,
+  onUploadAvatar,
   accountName,
+  accountAvatar,
+  audience = "personal",
+  onAudienceChange,
   searchOpen = false,
 }) {
+  const loginOptions = loginMenuOptions(audience);
+  const avatarInputRef = useRef(null);
   const [openMenu, setOpenMenu] = useState(null);
   useEffect(() => {
     const close = () => setOpenMenu(null);
@@ -144,8 +179,13 @@ export function Header({
               <div className="relative">
                 <button
                   type="button"
-                  onClick={() => toggleMenu("Personal")}
-                  className={`inline-flex h-[50px] w-[140px] items-center justify-center rounded-[4px] bg-[#F26522] text-[20px] font-bold text-[#353535] transition-colors hover:text-white ${openMenu === "Personal" ? "text-white" : ""}`}
+                  onClick={() => {
+                    onAudienceChange?.("personal");
+                    toggleMenu("Personal");
+                  }}
+                  className={`inline-flex h-[50px] w-[140px] items-center justify-center rounded-[4px] text-[20px] font-bold text-[#353535] transition-colors hover:text-white ${
+                    audience === "personal" ? "bg-[#F26522]" : hoverLink
+                  } ${openMenu === "Personal" ? "text-white" : ""}`}
                 >
                   Personal
                 </button>
@@ -163,8 +203,15 @@ export function Header({
               <div className="relative">
                 <button
                   type="button"
-                  onClick={() => toggleMenu("Business")}
-                  className={`inline-flex h-[50px] w-[140px] items-center justify-center rounded-[5px] text-[20px] font-bold text-[#353535] ${hoverLink} ${openMenu === "Business" ? "text-[#F26522]" : ""}`}
+                  onClick={() => {
+                    onAudienceChange?.("business");
+                    toggleMenu("Business");
+                  }}
+                  className={`inline-flex h-[50px] w-[140px] items-center justify-center rounded-[5px] text-[20px] font-bold text-[#353535] ${
+                    audience === "business"
+                      ? "bg-[#F26522] text-white"
+                      : hoverLink
+                  } ${openMenu === "Business" && audience !== "business" ? "text-[#F26522]" : ""}`}
                 >
                   Business
                 </button>
@@ -244,21 +291,24 @@ export function Header({
               />
             </button>
             {accountName ? (
-              <div className="relative">
+              <div className="relative flex items-center gap-2">
+                <input
+                  ref={avatarInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="sr-only"
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    event.target.value = "";
+                    if (file) onUploadAvatar?.(file);
+                  }}
+                />
+                <AccountAvatar src={accountAvatar} fileRef={avatarInputRef} />
                 <button
                   type="button"
                   onClick={() => toggleMenu("account")}
-                  className={`flex items-center gap-2 text-left ${hoverLink} ${openMenu === "account" ? "text-[#F26522]" : ""}`}
+                  className={`text-left ${hoverLink} ${openMenu === "account" ? "text-[#F26522]" : ""}`}
                 >
-                  <div className="flex size-10 items-center justify-center overflow-hidden">
-                    <img
-                      src={headerPerson}
-                      alt=""
-                      width={36}
-                      height={36}
-                      className="h-9 w-9"
-                    />
-                  </div>
                   <p className="w-[89px] text-[20px] font-bold leading-normal">
                     Hi
                     <br />
@@ -269,6 +319,10 @@ export function Header({
                   <DropdownPanel
                     onClose={() => setOpenMenu(null)}
                     items={[
+                      {
+                        label: "Upload photo",
+                        onSelect: () => avatarInputRef.current?.click(),
+                      },
                       { label: "Z Rewards", href: "#rewards-and-promotions" },
                       { label: "Contact us", href: "#footer" },
                       { label: "Log out", onSelect: onLogout },
@@ -465,8 +519,12 @@ export function BurgerMenu({
   onOpenChargingLogin,
   onOpenBusinessLogin,
   onLogout,
+  onUploadAvatar,
   accountName,
+  accountAvatar,
+  audience = "personal",
 }) {
+  const loginOptions = loginMenuOptions(audience);
   return (
     <div
       className={`fixed inset-0 z-50 flex justify-center ${open ? "pointer-events-auto" : "pointer-events-none"} lg:hidden`}
@@ -501,7 +559,10 @@ export function BurgerMenu({
             </button>
           </div>
           {accountName ? (
-            <p className="mb-4 text-[17px] font-bold text-z-navy">Hi {accountName}</p>
+            <div className="mb-4 flex items-center gap-3">
+              <AccountAvatar src={accountAvatar} onUpload={onUploadAvatar} />
+              <p className="text-[17px] font-bold text-z-navy">Hi {accountName}</p>
+            </div>
           ) : (
             <div className="mb-6 flex flex-col gap-2">
               <p className="text-[13px] font-bold uppercase tracking-wide text-neutral-500">

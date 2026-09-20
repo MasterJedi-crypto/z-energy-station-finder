@@ -11,14 +11,16 @@
     "api": "node --env-file=.env server/index.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "seed:stations": "node server/seed-stations.js"
   },
   "dependencies": {
     "express": "^5.2.1",
     "leaflet": "^1.9.4",
     "mongodb": "^7.6.0",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "react-leaflet": "^5.0.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
