@@ -4,6 +4,7 @@ import { Hero, NewsCard, Services } from "./components/home/Hero";
 import { MapSection, Features } from "./components/home/Sections";
 
 
+
 function App() {
   return (
     <div className="min-h-screen bg-[#ececec] lg:bg-white">
