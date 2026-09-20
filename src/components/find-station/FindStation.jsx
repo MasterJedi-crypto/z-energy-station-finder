@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { LocationMap } from "./LocationMap";
 
 export function FindStation({ onBack }) {
   const [query, setQuery] = useState("");
@@ -92,27 +93,35 @@ export function FindStation({ onBack }) {
           </p>
         ) : null}
 
-        {places.length > 0 ? (
+               {!loading && !error && places.length > 0 ? (
           <>
             <h2 className="mb-5 text-2xl font-bold text-[#252525]">
               Search results
             </h2>
 
-            <ul className="grid gap-4">
-              {places.map((place) => (
-                <li
-                  key={`${place.label}-${place.lat}-${place.lng}`}
-                  className="rounded-md border border-[#211878] bg-white p-5 shadow-sm"
-                >
-                  <h3 className="text-xl font-bold text-[#211878]">
-                    {place.label}
-                  </h3>
-                  <p className="mt-2 text-sm text-gray-600">
-                    Latitude: {place.lat} · Longitude: {place.lng}
-                  </p>
-                </li>
-              ))}
-            </ul>
+            <p className="mb-5 text-sm text-gray-600">
+              These markers show matching locations, not individual Z stations.
+            </p>
+
+            <div className="grid items-start gap-6 lg:grid-cols-2">
+              <ul className="grid min-w-0 gap-4">
+                {places.map((place) => (
+                  <li
+                    key={`${place.label}-${place.lat}-${place.lng}`}
+                    className="rounded-md border border-[#211878] bg-white p-5 shadow-sm"
+                  >
+                    <h3 className="text-xl font-bold text-[#211878]">
+                      {place.label}
+                    </h3>
+                    <p className="mt-2 text-sm text-gray-600">
+                      Latitude: {place.lat} · Longitude: {place.lng}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+
+              <LocationMap places={places} />
+            </div>
           </>
         ) : null}
       </section>
