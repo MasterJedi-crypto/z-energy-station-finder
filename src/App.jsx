@@ -13,6 +13,7 @@ import {
 } from "./components/auth/LoginPages";
 import { clearSession, getSession, headerDisplayName, updateAvatar } from "./auth";
 import { FindStation } from "./components/find-station/FindStation";
+import { StationDetails } from "./components/find-station/StationDetails";
 
 const authPages = new Set([
   "ev-fleet",
@@ -23,11 +24,11 @@ const authPages = new Set([
   "z-business-register",
   "z-business-forgot",
 ]);
-
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [page, setPage] = useState("home");
+const [selectedStationId, setSelectedStationId] = useState(null);
   const [accountName, setAccountName] = useState(
     () => headerDisplayName(getSession()),
   );
@@ -42,7 +43,12 @@ function App() {
   setSearchOpen(false);
   setPage("find-station");
 };
-
+const openStationDetails = (stationId) => {
+  setSelectedStationId(stationId);
+  setMenuOpen(false);
+  setSearchOpen(false);
+  setPage("station-details");
+};
   const goPlanTrip = () => setPage("home");
   const completeLogin = (nextSession) => {
     setSession(nextSession);
@@ -73,11 +79,9 @@ function App() {
     setMenuOpen(false);
     setPage("z-business-login");
   };
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [page]);
-
   if (authPages.has(page)) {
     return (
       <div className="min-h-screen bg-white">
@@ -138,7 +142,6 @@ function App() {
       </div>
     );
   }
-
   return (
     <div className="min-h-screen bg-[#ececec] lg:bg-white">
       <div className="relative mx-auto min-h-screen w-full max-w-[430px] overflow-x-hidden bg-white lg:max-w-none">
@@ -158,8 +161,16 @@ function App() {
           audience={audience}
           onAudienceChange={setAudience}
         />
-        {page === "find-station" ? (
-  <FindStation onBack={goHome} />
+{page === "find-station" ? (
+  <FindStation
+    onBack={goHome}
+    onSelectStation={openStationDetails}
+  />
+) : page === "station-details" ? (
+  <StationDetails
+    stationId={selectedStationId}
+    onBack={goFindStation}
+  />
 ) : (
   <>
     <Hero onFindStation={goFindStation} />
@@ -167,9 +178,8 @@ function App() {
     <Services />
     <MapSection onFindStation={goFindStation} />
     <Features />
-    </>
+  </>
 )}
-
         <Footer />
         <BurgerMenu
           open={menuOpen}
