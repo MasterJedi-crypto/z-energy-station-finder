@@ -123,7 +123,7 @@ function App() {
         {page === "z-business-register" ? (
           <ZBusinessRegister
             accountType={audience}
-             onBack={goHome}
+             onHome={goHome}
             onBack={() => setPage("z-business-login")}
             onSignedIn={completeLogin}
           />

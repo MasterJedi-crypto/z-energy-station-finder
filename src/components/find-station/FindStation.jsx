@@ -21,7 +21,7 @@ export function FindStation({ onBack }) {
         throw new Error("Unable to search for locations.");
       }
 
-      setPlaces(data.places);
+      setPlaces(data.places ?? []);
     } catch {
       setPlaces([]);
       setError("We couldn’t load locations. Please try again.");
