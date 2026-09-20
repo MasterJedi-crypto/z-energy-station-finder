@@ -11,7 +11,8 @@
     "api": "node --env-file=.env server/index.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "seed:stations": "node server/seed-stations.js"
   },
   "dependencies": {
     "express": "^5.2.1",

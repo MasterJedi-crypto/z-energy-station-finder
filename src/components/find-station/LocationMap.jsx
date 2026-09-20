@@ -8,18 +8,12 @@ import {
   useMap,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import markerUrl from "leaflet/dist/images/marker-icon.png";
-import markerRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
-import shadowUrl from "leaflet/dist/images/marker-shadow.png";
 
 const locationIcon = icon({
-  iconUrl: markerUrl,
-  iconRetinaUrl: markerRetinaUrl,
-  shadowUrl,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
+  iconUrl: "/images/z-pin.png",
+  iconSize: [40, 48],
+  iconAnchor: [22, 41],
+  popupAnchor: [0, -39],
 });
 
 function FitResults({ places }) {
