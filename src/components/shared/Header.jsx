@@ -1,7 +1,8 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { Logo } from "./Logo";
-import { CameraIcon, ChevronDownIcon, CloseIcon, MenuIcon, SearchIcon } from "./Icons";
+import { CameraIcon, ChevronDownIcon, ChevronRightIcon, MenuIcon, SearchIcon } from "./Icons";
 import { loginMenuOptions } from "../../auth";
+import { CtaPill } from "./CtaPill";
 import headerPerson from "../../assets/figma/header-person.svg";
 import headerSearch from "../../assets/figma/header-search.svg";
 
@@ -501,15 +502,55 @@ export function SearchOverlay({ open, onClose, onSearchStations }) {
     </div>
   );
 }
-const menuLinks = [
-  "Plan a trip",
-  "At the station",
-  "Z App",
-  "For business",
-  "Sustainability",
-  "About Z",
-  "Z Rewards",
+const burgerGroups = [
+  [
+    { label: "At the stations", href: "#at-the-station", chevron: true },
+    { label: "Rewards and promotions", href: "#rewards-and-promotions", chevron: true },
+    { label: "Z App", href: "#z-app", chevron: true },
+    { label: "Locations", action: "find", chevron: false },
+  ],
+  [
+    { label: "My trips", action: "trip", chevron: true },
+    { label: "My Favorites", href: "#news", chevron: true },
+    { label: "Recents Searches", href: "#news", chevron: true },
+  ],
+  [
+    { label: "Download Z App", href: "#footer", chevron: true },
+    { label: "About Z", href: "#about-z", chevron: true },
+  ],
 ];
+
+function BurgerLink({ item, onClose, onHome, onFindStation, onPlanTrip }) {
+  const className =
+    "flex min-h-[52px] w-full items-center justify-between text-left text-[20px] font-semibold leading-none text-[#1A1A1A]";
+  const content = (
+    <>
+      <span>{item.label}</span>
+      {item.chevron ? (
+        <ChevronRightIcon className="size-4 text-[#1A1A1A]" />
+      ) : null}
+    </>
+  );
+  const go = () => {
+    if (item.action === "find") onFindStation?.();
+    else if (item.action === "trip") onPlanTrip?.();
+    else onHome?.();
+    onClose();
+  };
+  if (item.href) {
+    return (
+      <a href={item.href} onClick={go} className={className}>
+        {content}
+      </a>
+    );
+  }
+  return (
+    <button type="button" onClick={go} className={className}>
+      {content}
+    </button>
+  );
+}
+
 export function BurgerMenu({
   open,
   onClose,
@@ -523,117 +564,121 @@ export function BurgerMenu({
   accountName,
   accountAvatar,
   audience = "personal",
+  onAudienceChange,
 }) {
-  const loginOptions = loginMenuOptions(audience);
+  const personal = audience !== "business";
+  useEffect(() => {
+    if (!open) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open, onClose]);
+  const openLogin = () => {
+    if (personal) onOpenChargingLogin?.();
+    else onOpenBusinessLogin?.();
+    onClose();
+  };
   return (
     <div
       className={`fixed inset-0 z-50 flex justify-center ${open ? "pointer-events-auto" : "pointer-events-none"} lg:hidden`}
       aria-hidden={!open}
+      {...(!open ? { inert: "" } : {})}
     >
       <div
-        className={`absolute inset-0 bg-black/40 transition-opacity ${open ? "opacity-100" : "opacity-0"}`}
+        className={`absolute inset-0 bg-[#ececec]/90 transition-opacity ${open ? "opacity-100" : "opacity-0"}`}
         onClick={onClose}
       />
-      <div className="relative h-full w-full max-w-[430px] overflow-hidden">
+      <div
+        className={`relative flex h-full w-full items-start justify-center overflow-y-auto px-3 py-6 transition-opacity ${open ? "opacity-100" : "opacity-0"}`}
+        onClick={onClose}
+      >
         <aside
-          className={`h-full overflow-y-auto bg-white px-6 py-5 shadow-2xl transition-transform duration-300 ${open ? "translate-x-0" : "translate-x-full"}`}
+          className="flex h-[714px] w-[444px] shrink-0 flex-col rounded-[16px] bg-white px-[27px] pb-6 pt-5 shadow-[0_8px_24px_rgba(30,25,106,0.08)]"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Menu"
+          onClick={(event) => event.stopPropagation()}
         >
-          <div className="mb-6 flex items-center justify-between">
+          <div
+            className="flex"
+            role="tablist"
+            aria-label="Audience"
+          >
             <button
               type="button"
-              onClick={() => {
-                onHome();
-                onClose();
-              }}
-              aria-label="Z Energy home"
+              role="tab"
+              aria-selected={personal}
+              onClick={() => onAudienceChange?.("personal")}
+              className={`flex h-[60px] w-[195px] shrink-0 items-center justify-center gap-[10px] rounded-[10px] p-[10px] text-[16px] font-bold leading-none ${
+                personal
+                  ? "bg-[#F26522] text-white"
+                  : "border border-[#1E196A] bg-white text-[#1E196A]"
+              }`}
             >
-              <Logo className="h-10 w-10" />
+              For personal
             </button>
             <button
               type="button"
-              aria-label="Close menu"
-              onClick={onClose}
-              className="text-z-navy"
+              role="tab"
+              aria-selected={!personal}
+              onClick={() => onAudienceChange?.("business")}
+              className={`flex h-[60px] w-[195px] shrink-0 items-center justify-center gap-[10px] rounded-[10px] p-[10px] text-[16px] font-bold leading-none ${
+                personal
+                  ? "border border-[#1E196A] bg-white text-[#1E196A]"
+                  : "bg-[#F26522] text-white"
+              }`}
             >
-              <CloseIcon />
+              For business
             </button>
           </div>
-          {accountName ? (
-            <div className="mb-4 flex items-center gap-3">
-              <AccountAvatar src={accountAvatar} onUpload={onUploadAvatar} />
-              <p className="text-[17px] font-bold text-z-navy">Hi {accountName}</p>
-            </div>
-          ) : (
-            <div className="mb-6 flex flex-col gap-2">
-              <p className="text-[13px] font-bold uppercase tracking-wide text-neutral-500">
-                Login
-              </p>
-              {loginOptions.map((option) => (
-                <button
-                  key={option.id}
-                  type="button"
-                  className="rounded-xl border border-[#eee] px-4 py-3 text-left"
-                  onClick={() => {
-                    if (option.id === "charging") onOpenChargingLogin?.();
-                    else onOpenBusinessLogin?.();
-                    onClose();
-                  }}
-                >
-                  <span className="block text-[15px] font-bold text-z-navy">
-                    {option.title}
-                  </span>
-                  <span className="text-[13px] text-neutral-500">{option.subtitle}</span>
-                </button>
-              ))}
-            </div>
-          )}
-          <button
-            type="button"
-            onClick={() => {
-              onFindStation();
-              onClose();
-            }}
-            className="mb-6 flex h-12 w-full items-center justify-center rounded-full bg-z-orange text-base font-bold text-white"
-          >
-            Find a station
-          </button>
-          <nav className="flex flex-col gap-5 text-[17px] font-semibold text-z-navy">
-            {menuLinks.map((item) => (
-              <a
-                key={item}
-                href={`#${item.toLowerCase().replace(/\s+/g, "-")}`}
-                onClick={() => {
-                  if (item === "Plan a trip") onPlanTrip();
-                  else onHome();
-                  onClose();
-                }}
+          <nav className="mt-6 flex flex-1 flex-col justify-between">
+            {burgerGroups.map((group, index) => (
+              <div
+                key={group[0].label}
+                className={index > 0 ? "border-t border-[#E6E6E6] pt-3" : ""}
               >
-                {item}
-              </a>
+                {group.map((item) => (
+                  <BurgerLink
+                    key={item.label}
+                    item={item}
+                    onClose={onClose}
+                    onHome={onHome}
+                    onFindStation={onFindStation}
+                    onPlanTrip={onPlanTrip}
+                  />
+                ))}
+              </div>
             ))}
           </nav>
-          <a
-            href="#footer"
-            onClick={() => {
-              onHome();
-              onClose();
-            }}
-            className="mt-8 flex h-12 items-center justify-center rounded-full bg-z-orange text-base font-bold text-white"
-          >
-            Contact us
-          </a>
           {accountName ? (
-            <button
-              type="button"
-              onClick={() => {
-                onLogout?.();
-                onClose();
-              }}
-              className="mt-3 flex h-12 w-full items-center justify-center rounded-full border border-[#F26522] text-base font-bold text-[#F26522]"
-            >
-              Log out
-            </button>
-          ) : null}
+            <div className="mt-auto flex items-center justify-between gap-3 pt-4">
+              <div className="flex items-center gap-3">
+                <AccountAvatar src={accountAvatar} onUpload={onUploadAvatar} />
+                <p className="text-[16px] font-bold text-[#1A1A1A]">Hi {accountName}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  onLogout?.();
+                  onClose();
+                }}
+                className="text-[14px] font-bold text-[#F26522]"
+              >
+                Log out
+              </button>
+            </div>
+          ) : (
+            <div className="mt-auto pt-4">
+              <CtaPill size="compact" onClick={openLogin}>Login</CtaPill>
+            </div>
+          )}
         </aside>
       </div>
     </div>
