@@ -7,7 +7,6 @@ function parseNumber(value, minimum, maximum) {
     ? number
     : null;
 }
-
 function distanceKm(lat1, lng1, lat2, lng2) {
   const radians = (degrees) => (degrees * Math.PI) / 180;
   const a =
@@ -70,7 +69,6 @@ export function createStationsRouter(getCollection) {
       } else {
         stations.sort((a, b) => a.name.localeCompare(b.name));
       }
-
       return res.json({ ok: true, stations });
     } catch {
       return res.status(503).json({
@@ -79,6 +77,39 @@ export function createStationsRouter(getCollection) {
       });
     }
   });
+  router.get("/:id", async (req, res) => {
+    try {
+      const station = await getCollection().findOne(
+        { id: req.params.id },
+        {
+          projection: {
+            _id: 0,
+            id: 1,
+            name: 1,
+            address: 1,
+            lat: 1,
+            lng: 1,
+          },
+        }
+      );
 
+      if (!station) {
+        return res.status(404).json({
+          ok: false,
+          error: "Station not found.",
+        });
+      }
+
+      return res.json({
+        ok: true,
+        station,
+      });
+    } catch {
+      return res.status(503).json({
+        ok: false,
+        error: "Station details are temporarily unavailable.",
+      });
+    }
+  });
   return router;
 }

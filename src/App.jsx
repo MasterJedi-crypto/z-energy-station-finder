@@ -13,6 +13,7 @@ import {
 } from "./components/auth/LoginPages";
 import { clearSession, getSession, headerDisplayName, updateAvatar } from "./auth";
 import { FindStation } from "./components/find-station/FindStation";
+import { StationDetails } from "./components/find-station/StationDetails";
 import { PlanTrip } from "./components/plan-trip/PlanTrip";
 
 const authPages = new Set([
@@ -25,11 +26,11 @@ const authPages = new Set([
   "z-business-forgot",
 ]);
 
-
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [page, setPage] = useState("home");
+  const [selectedStationId, setSelectedStationId] = useState(null);
   const [accountName, setAccountName] = useState(
     () => headerDisplayName(getSession()),
   );
@@ -38,19 +39,22 @@ function App() {
     () => getSession()?.accountType || "personal",
   );
   const goHome = () => setPage("home");
-  // Step 3: Siobhan (Find a station) and Koni (Plan a trip) replace these.
   const goFindStation = () => {
-  setMenuOpen(false);
-  setSearchOpen(false);
-  setPage("find-station");
-};
-    // added changes (koni) to go to plan trip page from home  
-    const goPlanTrip = () => {
+    setMenuOpen(false);
+    setSearchOpen(false);
+    setPage("find-station");
+  };
+  const openStationDetails = (stationId) => {
+    setSelectedStationId(stationId);
+    setMenuOpen(false);
+    setSearchOpen(false);
+    setPage("station-details");
+  };
+  const goPlanTrip = () => {
     setMenuOpen(false);
     setSearchOpen(false);
     setPage("plan-trip");
-  };  
-
+  };
   const completeLogin = (nextSession) => {
     setSession(nextSession);
     setAccountName(headerDisplayName(nextSession));
@@ -80,11 +84,9 @@ function App() {
     setMenuOpen(false);
     setPage("z-business-login");
   };
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [page]);
-
   if (authPages.has(page)) {
     return (
       <div className="min-h-screen bg-white">
@@ -130,7 +132,7 @@ function App() {
         {page === "z-business-register" ? (
           <ZBusinessRegister
             accountType={audience}
-             onHome={goHome}
+            onHome={goHome}
             onBack={() => setPage("z-business-login")}
             onSignedIn={completeLogin}
           />
@@ -145,7 +147,6 @@ function App() {
       </div>
     );
   }
-
   return (
     <div className="min-h-screen bg-[#ececec] lg:bg-white">
       <div className="relative mx-auto min-h-screen w-full max-w-[430px] overflow-x-hidden bg-white lg:max-w-none">
@@ -165,22 +166,21 @@ function App() {
           audience={audience}
           onAudienceChange={setAudience}
         />
-
- 
         {page === "find-station" ? (
-  <FindStation onBack={goHome} />
-  ) : page === "plan-trip" ? (
-  <PlanTrip />
-  ) : (
-  <>
-    <Hero onFindStation={goFindStation} />
-    <NewsCard />
-    <Services />
-    <MapSection onFindStation={goFindStation} />
-    <Features />
-    </>
-)}
-
+          <FindStation onBack={goHome} onSelectStation={openStationDetails} />
+        ) : page === "station-details" ? (
+          <StationDetails stationId={selectedStationId} onBack={goFindStation} />
+        ) : page === "plan-trip" ? (
+          <PlanTrip />
+        ) : (
+          <>
+            <Hero onFindStation={goFindStation} />
+            <NewsCard />
+            <Services />
+            <MapSection onFindStation={goFindStation} />
+            <Features />
+          </>
+        )}
         <Footer />
         <BurgerMenu
           open={menuOpen}

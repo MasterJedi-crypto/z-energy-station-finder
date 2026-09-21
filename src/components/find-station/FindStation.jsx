@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { LocationMap } from "./LocationMap";
 
-export function FindStation({ onBack }) {
+export function FindStation({ onBack, onSelectStation }) {
   const [query, setQuery] = useState("");
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -9,13 +9,11 @@ export function FindStation({ onBack }) {
   const [searched, setSearched] = useState(false);
   const [searchLabel, setSearchLabel] = useState("");
   const [message, setMessage] = useState("");
-
   // Keep the existing map contract while giving it real station coordinates.
   const mapPlaces = useMemo(
     () => stations.map((station) => ({ ...station, label: station.name })),
     [stations],
   );
-
   async function searchStations(event) {
     event.preventDefault();
     if (loading) return;
@@ -26,10 +24,8 @@ export function FindStation({ onBack }) {
     setStations([]);
     setSearched(true);
     setSearchLabel("");
-
     try {
       let stationUrl = "/api/stations";
-
       if (search) {
         const response = await fetch(`/api/geocode?q=${encodeURIComponent(search)}`);
         const data = await response.json();
@@ -49,7 +45,6 @@ export function FindStation({ onBack }) {
         });
         stationUrl = `/api/stations?${params}`;
       }
-
       const response = await fetch(stationUrl);
       const data = await response.json();
       if (!response.ok || !data?.ok || !Array.isArray(data.stations)) {
@@ -68,7 +63,6 @@ export function FindStation({ onBack }) {
       setLoading(false);
     }
   }
-
   return (
     <main className="min-h-[70vh] bg-white">
       <section className="bg-gradient-to-r from-[#f4510b] to-[#ffa534] px-6 py-12 text-white lg:px-20">
@@ -120,12 +114,21 @@ export function FindStation({ onBack }) {
                     className="rounded-md border border-[#211878] bg-white p-5 shadow-sm">
                     <h3 className="text-xl font-bold text-[#211878]">{station.name}</h3>
                     <p className="mt-2 text-sm text-gray-600">{station.address}</p>
-                    {Number.isFinite(station.distanceKm) ? (
-                      <p className="mt-3 font-semibold text-[#211878]">
-                        {station.distanceKm.toFixed(1)} km from {searchLabel} centre
-                      </p>
-                    ) : null}
-                  </li>
+
+{Number.isFinite(station.distanceKm) ? (
+  <p className="mt-3 font-semibold text-[#211878]">
+    {station.distanceKm.toFixed(1)} km from {searchLabel} centre
+  </p>
+) : null}
+
+<button
+  type="button"
+  onClick={() => onSelectStation(station.id)}
+  className="mt-5 w-full rounded-lg bg-[#f4510b] px-5 py-3 font-semibold text-white transition-colors hover:bg-[#d84308]"
+>
+  View station details
+</button>
+</li>
                 ))}
               </ul>
               <LocationMap places={mapPlaces} />
