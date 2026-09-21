@@ -10,10 +10,8 @@ import { FUEL_TYPES } from "./serviceOptions";
 import { TripResults } from "./TripResults";
 import { TripSummaryBar } from "./TripSummaryBar";
 
-// TODO: replace with the logged-in user from auth.js
-const DEMO_USER_ID = "user1";
-
-export function PlanTrip() {
+export function PlanTrip({ account, onNeedLogin }) {
+  const userId = account?.userId;
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [stop, setStop] = useState("");
@@ -26,8 +24,12 @@ export function PlanTrip() {
   const [error, setError] = useState("");
 
   async function loadTrips() {
+    if (!userId) {
+      setTrips([]);
+      return;
+    }
     try {
-      setTrips(await listTrips(DEMO_USER_ID));
+      setTrips(await listTrips(userId));
     } catch (err) {
       setError(err.message);
     }
@@ -35,7 +37,7 @@ export function PlanTrip() {
 
   useEffect(() => {
     loadTrips();
-  }, []);
+  }, [userId]);
 
   function toggleService(id) {
     setServices((current) =>
@@ -56,12 +58,15 @@ export function PlanTrip() {
 
   async function handleSave() {
     setError("");
+    if (!userId) {
+      setError("Log in to save this trip.");
+      onNeedLogin?.();
+      return;
+    }
+
     try {
       await saveTrip({
-        userId: DEMO_USER_ID,
-        from,
-        to,
-        stops: stop ? [stop] : [],
+        userId, from, to, stops: stop ? [stop] : [],
       });
       setSaved(true);
       await loadTrips();
@@ -73,7 +78,7 @@ export function PlanTrip() {
   async function handleDelete(id) {
     setError("");
     try {
-      await deleteTrip(id, DEMO_USER_ID);
+      await deleteTrip(id, userId);
       await loadTrips();
     } catch (err) {
       setError(err.message);
