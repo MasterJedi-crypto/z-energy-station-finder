@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Logo } from "../shared/Logo";
 import { registerAccount } from "../../auth";
-import { AuthMessage, PasswordField } from "./shared";
+import { AuthMessage, ChargingAuthHeader, PasswordField } from "./shared";
 
 export function EvFleetRegister({ onHome, onBack, onSignedIn, accountType = "personal" }) {
   const [name, setName] = useState("");
@@ -15,9 +14,7 @@ export function EvFleetRegister({ onHome, onBack, onSignedIn, accountType = "per
 
   return (
     <div className="flex min-h-screen flex-col bg-[#f7f7f7]">
-      <header className="flex h-[88px] items-center bg-[linear-gradient(90deg,#eb4f10_0%,#f06f12_52%,#ffa53b_100%)] px-6 lg:px-10">
-        <Logo className="h-14 w-14" />
-      </header>
+      <ChargingAuthHeader />
       <main className="flex flex-1 flex-col items-center px-6 pt-16 pb-10">
         <form
           className="w-full max-w-[420px] rounded-[18px] bg-white px-8 py-8 shadow-[0_12px_40px_rgba(0,0,0,0.08)]"
