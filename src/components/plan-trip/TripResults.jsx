@@ -3,7 +3,7 @@ import { OTHER_SERVICES, PREFERENCE_SERVICES } from "./serviceOptions";
 
 const ALL_SERVICES = [...PREFERENCE_SERVICES, ...OTHER_SERVICES];
 
-export function TripResults({ trip, saved, onSave, onEdit }) {
+export function TripResults({ trip, route, saved, onSave, onEdit }) {
   const serviceLabels = ALL_SERVICES.filter((s) =>
     trip.services.includes(s.id),
   ).map((s) => s.label);
@@ -15,6 +15,11 @@ export function TripResults({ trip, saved, onSave, onEdit }) {
         <p className="text-[18px] font-bold text-[#353535]">
           {trip.from} → {trip.to}
         </p>
+                {route ? (
+          <p className="text-[16px] text-[#353535]">
+            Approx. {route.distanceKm} km · {route.durationLabel} (driving time)
+          </p>
+        ) : null}
         {trip.stop ? (
           <p className="text-[16px] text-[#58595B]">Stopping at {trip.stop}</p>
         ) : null}

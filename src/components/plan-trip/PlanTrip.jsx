@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { deleteTrip, listTrips, saveTrip } from "../../api";
+import { deleteTrip, listTrips, planRoute, saveTrip } from "../../api";
 import { SavedTrips } from "./SavedTrips";
 import { TripHero } from "./TripHero";
 import { TripFields } from "./TripFields";
@@ -20,6 +20,8 @@ export function PlanTrip({ account, onNeedLogin }) {
   const [cheapest, setCheapest] = useState(false);
   const [planned, setPlanned] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [route, setRoute] = useState(null);
+  const [planning, setPlanning] = useState(false);
   const [trips, setTrips] = useState([]);
   const [error, setError] = useState("");
 
@@ -45,15 +47,24 @@ export function PlanTrip({ account, onNeedLogin }) {
     );
   }
 
-  function handlePlan(event) {
+  async function handlePlan(event) {
     event.preventDefault();
     if (!from.trim() || !to.trim()) {
       setError("Please enter a starting point and a destination.");
       return;
     }
     setError("");
-    setSaved(false);
-    setPlanned(true);
+    setPlanning(true);
+    try {
+      const result = await planRoute({ from, to, stops: stop ? [stop] : [] });
+      setRoute(result);
+      setSaved(false);
+      setPlanned(true);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setPlanning(false);
+    }
   }
 
   async function handleSave() {
@@ -63,10 +74,16 @@ export function PlanTrip({ account, onNeedLogin }) {
       onNeedLogin?.();
       return;
     }
-
     try {
       await saveTrip({
-        userId, from, to, stops: stop ? [stop] : [],
+        userId,
+        from,
+        to,
+        stops: stop ? [stop] : [],
+        origin: route?.origin,
+        destination: route?.destination,
+        distanceKm: route?.distanceKm,
+        durationLabel: route?.durationLabel,
       });
       setSaved(true);
       await loadTrips();
@@ -97,6 +114,7 @@ export function PlanTrip({ account, onNeedLogin }) {
             />
             <TripResults
               trip={{ from, to, stop, fuelType, services, cheapest }}
+              route={route}
               saved={saved}
               onSave={handleSave}
               onEdit={() => setPlanned(false)}
@@ -121,28 +139,26 @@ export function PlanTrip({ account, onNeedLogin }) {
               services={services}
               onToggleService={toggleService}
             />
-            <OtherServices
-              services={services}
-              onToggleService={toggleService}
-            />
+            <OtherServices services={services} onToggleService={toggleService} />
             <CheapestToggle checked={cheapest} onChange={setCheapest} />
-
-            {error ? (
-              <p role="alert" className="text-red-600">
-                {error}
-              </p>
-            ) : null}
 
             <button
               type="submit"
-              className="mx-auto h-[42px] w-full max-w-[237px] rounded-[8px] bg-z-navy text-[16px] font-bold text-white"
+              disabled={planning}
+              className="mx-auto h-[42px] w-full max-w-[237px] rounded-[8px] bg-z-navy text-[16px] font-bold text-white disabled:opacity-60"
             >
-              Plan my Trip
+              {planning ? "Planning…" : "Plan my Trip"}
             </button>
           </form>
         )}
 
-        <div className="mx-auto max-w-[780px]">
+        {error ? (
+          <p role="alert" className="mx-auto mt-4 max-w-[895px] text-red-600">
+            {error}
+          </p>
+        ) : null}
+
+        <div className="mx-auto max-w-[895px]">
           <SavedTrips trips={trips} onDelete={handleDelete} />
         </div>
       </div>

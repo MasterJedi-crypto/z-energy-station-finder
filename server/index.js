@@ -3,6 +3,7 @@ import { connectDb, getDb } from "./db.js";
 import { createAuthRouter, ensureAuthIndexes } from "./routes/auth.js";
 import { createTripsRouter } from "./routes/trips.js";
 import { createStationsRouter } from "./routes/stations.js";
+import { createRouteRouter } from "./routes/route.js";
 
 export const app = express();
 const port = Number(process.env.PORT) || 3001;
@@ -31,6 +32,7 @@ app.get("/geocode", (req, res) => {
 app.use("/auth", createAuthRouter(getDb));
 app.use("/trips", createTripsRouter(() => getDb().collection("saved-trips")));
 app.use("/stations", createStationsRouter(() => getDb().collection("stations")));
+app.use("/route", createRouteRouter());
 
 const startedDirectly = process.argv[1]
   ?.replaceAll("\\", "/")
