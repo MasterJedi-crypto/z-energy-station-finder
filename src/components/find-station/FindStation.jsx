@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react";
 import { LocationMap } from "./LocationMap";
+import { TripPlannerButton } from "../plan-trip/TripPlannerButton";
 
-export function FindStation({ onBack, onSelectStation }) {
+export function FindStation({ onBack, onSelectStation, onPlanTrip }) {
+
   const [query, setQuery] = useState("");
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -82,7 +84,14 @@ export function FindStation({ onBack, onSelectStation }) {
             className="px-6 text-2xl text-[#171717] disabled:opacity-50"
             aria-label="Search for stations">→</button>
         </form>
-      </section>
+       </section>
+
+      <div className="mx-auto grid max-w-[1440px] px-6 pt-6 lg:grid-cols-4 lg:gap-x-[30px] lg:px-20">
+        <div className="lg:col-start-4">
+          <TripPlannerButton onPlanTrip={onPlanTrip} />
+        </div>
+      </div>
+
 
       <section className="mx-auto max-w-6xl px-6 py-10 lg:px-20" aria-busy={loading}>
         <p className="mb-5 text-sm text-gray-600">
