@@ -209,6 +209,29 @@ describe("auth API", () => {
       expect(login.body.ok).toBe(true);
     });
 
+    it("resets a password by userId", async () => {
+      await request(app).post("/auth/register").send({
+        email: "driver@z.co.nz",
+        name: "Driver",
+        userId: "driver",
+        password: "secret1",
+        confirmPassword: "secret1",
+        accountType: "personal",
+      });
+
+      const reset = await request(app).post("/auth/reset").send({
+        userId: "driver",
+        password: "secret2",
+        confirmPassword: "secret2",
+      });
+      expect(reset.body).toEqual({ ok: true });
+
+      const login = await request(app)
+        .post("/auth/login")
+        .send({ userId: "driver", password: "secret2" });
+      expect(login.body.ok).toBe(true);
+    });
+
     it("stores an avatar on the user and returns it in the session", async () => {
       await request(app).post("/auth/register").send({
         email: "driver@z.co.nz",
