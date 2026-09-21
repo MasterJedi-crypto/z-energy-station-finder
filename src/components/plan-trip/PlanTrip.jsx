@@ -1,14 +1,23 @@
 import { useEffect, useState } from "react";
-import { deleteTrip, listTrips, saveTrip } from "../../api";
+import { deleteTrip, listTrips } from "../../api";
 import { SavedTrips } from "./SavedTrips";
 import { TripHero } from "./TripHero";
+import { TripFields } from "./TripFields";
+import { TripPreferences } from "./TripPreferences";
+import { OtherServices } from "./OtherServices";
+import { CheapestToggle } from "./CheapestToggle";
+import { FUEL_TYPES } from "./serviceOptions";
 
-// TODO: replace with the logged-in user once Rodrigo's auth is ready
+// TODO: replace with the logged-in user from auth.js
 const DEMO_USER_ID = "user1";
 
 export function PlanTrip() {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
+  const [stop, setStop] = useState("");
+  const [fuelType, setFuelType] = useState(FUEL_TYPES[0]);
+  const [services, setServices] = useState([]);
+  const [cheapest, setCheapest] = useState(false);
   const [trips, setTrips] = useState([]);
   const [error, setError] = useState("");
 
@@ -24,17 +33,20 @@ export function PlanTrip() {
     loadTrips();
   }, []);
 
-  async function handleSave(event) {
+  function toggleService(id) {
+    setServices((current) =>
+      current.includes(id) ? current.filter((s) => s !== id) : [...current, id],
+    );
+  }
+
+  function handlePlan(event) {
     event.preventDefault();
-    setError("");
-    try {
-      await saveTrip({ userId: DEMO_USER_ID, from, to });
-      setFrom("");
-      setTo("");
-      await loadTrips();
-    } catch (err) {
-      setError(err.message);
+    if (!from.trim() || !to.trim()) {
+      setError("Please enter a starting point and a destination.");
+      return;
     }
+    setError("");
+    // TODO: show Stage 2 (Your trip) here
   }
 
   async function handleDelete(id) {
@@ -50,33 +62,42 @@ export function PlanTrip() {
   return (
     <>
       <TripHero />
-      <section className="mx-auto max-w-[1440px] px-5 py-10 lg:px-16">
-
-      <form onSubmit={handleSave} className="mt-6 flex flex-col gap-3 lg:flex-row">
-        <input
-          value={from}
-          onChange={(e) => setFrom(e.target.value)}
-          placeholder="Starting point"
-          className="rounded-lg border border-gray-300 px-4 py-3"
-        />
-        <input
-          value={to}
-          onChange={(e) => setTo(e.target.value)}
-          placeholder="Destination"
-          className="rounded-lg border border-gray-300 px-4 py-3"
-        />
-        <button
-          type="submit"
-          className="rounded-full bg-z-orange px-6 py-3 font-bold text-white"
+      <div className="mx-auto max-w-[1440px] px-5 pb-16 lg:px-16">
+        <form
+          onSubmit={handlePlan}
+          className="relative mx-auto flex max-w-[895px] flex-col gap-6 rounded-[10px] border border-[#A7A9AC] p-5 shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] lg:-mt-[140px] lg:p-[25px]"
         >
-          Save trip
-        </button>
-      </form>
+          <TripFields
+            from={from}
+            to={to}
+            stop={stop}
+            onFromChange={setFrom}
+            onToChange={setTo}
+            onStopChange={setStop}
+          />
+          <TripPreferences
+            fuelType={fuelType}
+            onFuelTypeChange={setFuelType}
+            services={services}
+            onToggleService={toggleService}
+          />
+          <OtherServices services={services} onToggleService={toggleService} />
+          <CheapestToggle checked={cheapest} onChange={setCheapest} />
 
-      {error ? <p role="alert" className="mt-3 text-red-600">{error}</p> : null}
+          {error ? <p role="alert" className="text-red-600">{error}</p> : null}
 
-      <SavedTrips trips={trips} onDelete={handleDelete} />
-      </section>
+          <button
+            type="submit"
+            className="mx-auto h-[42px] w-full max-w-[237px] rounded-[8px] bg-z-navy text-[16px] font-bold text-white"
+          >
+            Plan my Trip
+          </button>
+        </form>
+
+        <div className="mx-auto max-w-[780px]">
+          <SavedTrips trips={trips} onDelete={handleDelete} />
+        </div>
+      </div>
     </>
   );
 }
