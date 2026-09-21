@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { deleteTrip, listTrips, saveTrip } from "../../api";
 import { SavedTrips } from "./SavedTrips";
+import { TripHero } from "./TripHero";
 
 // TODO: replace with the logged-in user once Rodrigo's auth is ready
 const DEMO_USER_ID = "user1";
@@ -47,8 +48,9 @@ export function PlanTrip() {
   }
 
   return (
-    <section className="mx-auto max-w-[1440px] px-5 py-10 lg:px-16">
-      <h1 className="text-3xl font-extrabold text-z-navy">Plan my trip</h1>
+    <>
+      <TripHero />
+      <section className="mx-auto max-w-[1440px] px-5 py-10 lg:px-16">
 
       <form onSubmit={handleSave} className="mt-6 flex flex-col gap-3 lg:flex-row">
         <input
@@ -74,6 +76,7 @@ export function PlanTrip() {
       {error ? <p role="alert" className="mt-3 text-red-600">{error}</p> : null}
 
       <SavedTrips trips={trips} onDelete={handleDelete} />
-    </section>
+      </section>
+    </>
   );
 }
