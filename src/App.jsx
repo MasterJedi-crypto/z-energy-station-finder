@@ -13,6 +13,7 @@ import {
 } from "./components/auth/LoginPages";
 import { clearSession, getSession, headerDisplayName, updateAvatar } from "./auth";
 import { FindStation } from "./components/find-station/FindStation";
+import { PlanTrip } from "./components/plan-trip/PlanTrip";
 
 const authPages = new Set([
   "ev-fleet",
@@ -43,8 +44,13 @@ function App() {
   setSearchOpen(false);
   setPage("find-station");
 };
+    // added changes (koni) to go to plan trip page from home  
+    const goPlanTrip = () => {
+    setMenuOpen(false);
+    setSearchOpen(false);
+    setPage("plan-trip");
+  };  
 
-  const goPlanTrip = () => setPage("home");
   const completeLogin = (nextSession) => {
     setSession(nextSession);
     setAccountName(headerDisplayName(nextSession));
@@ -159,9 +165,13 @@ function App() {
           audience={audience}
           onAudienceChange={setAudience}
         />
+
+ 
         {page === "find-station" ? (
   <FindStation onBack={goHome} />
-) : (
+  ) : page === "plan-trip" ? (
+  <PlanTrip />
+  ) : (
   <>
     <Hero onFindStation={goFindStation} />
     <NewsCard />
