@@ -182,26 +182,27 @@ function App() {
           </>
         )}
         <Footer />
-        <BurgerMenu
-          open={menuOpen}
-          onClose={() => setMenuOpen(false)}
-          onFindStation={goFindStation}
-          onPlanTrip={goPlanTrip}
-          onHome={goHome}
-          onOpenChargingLogin={goChargingLogin}
-          onOpenBusinessLogin={goBusinessLogin}
-          onLogout={logout}
-          onUploadAvatar={uploadAvatar}
-          accountName={accountName}
-          accountAvatar={session?.avatarUrl}
-          audience={audience}
-        />
         <SearchOverlay
           open={searchOpen}
           onClose={() => setSearchOpen(false)}
           onSearchStations={goFindStation}
         />
       </div>
+      <BurgerMenu
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        onFindStation={goFindStation}
+        onPlanTrip={goPlanTrip}
+        onHome={goHome}
+        onOpenChargingLogin={goChargingLogin}
+        onOpenBusinessLogin={goBusinessLogin}
+        onLogout={logout}
+        onUploadAvatar={uploadAvatar}
+        accountName={accountName}
+        accountAvatar={session?.avatarUrl}
+        audience={audience}
+        onAudienceChange={setAudience}
+      />
     </div>
   );
 }

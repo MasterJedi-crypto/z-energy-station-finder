@@ -27,6 +27,9 @@ export default defineConfig({
       },
     },
   ],
+  optimizeDeps: {
+    include: ["react-leaflet", "leaflet"],
+  },
   server: {
     proxy: {
       "/api": {
