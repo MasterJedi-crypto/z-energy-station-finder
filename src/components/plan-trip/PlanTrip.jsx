@@ -48,7 +48,7 @@ export function PlanTrip() {
 
   return (
     <section className="mx-auto max-w-[1440px] px-5 py-10 lg:px-16">
-      <h1 className="text-3xl font-extrabold text-z-navy">Plan a trip</h1>
+      <h1 className="text-3xl font-extrabold text-z-navy">Plan my trip</h1>
 
       <form onSubmit={handleSave} className="mt-6 flex flex-col gap-3 lg:flex-row">
         <input
