@@ -31,3 +31,12 @@ export async function deleteTrip(id, userId) {
   );
   return readJson(response);
 }
+
+export async function planRoute({ from, to, stops = [] }) {
+  const response = await fetch("/api/route", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ from, to, stops }),
+  });
+  return readJson(response);
+}

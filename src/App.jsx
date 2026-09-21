@@ -167,11 +167,11 @@ function App() {
           onAudienceChange={setAudience}
         />
         {page === "find-station" ? (
-          <FindStation onBack={goHome} onSelectStation={openStationDetails} />
+        <FindStation onBack={goHome} onSelectStation={openStationDetails} onPlanTrip={goPlanTrip} />
         ) : page === "station-details" ? (
           <StationDetails stationId={selectedStationId} onBack={goFindStation} />
         ) : page === "plan-trip" ? (
-          <PlanTrip />
+        <PlanTrip account={session} onNeedLogin={goBusinessLogin} />
         ) : (
           <>
             <Hero onFindStation={goFindStation} />
