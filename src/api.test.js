@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { listTrips, saveTrip, deleteTrip } from "./api.js";
-import { listTrips, saveTrip, deleteTrip, planRoute } from "./api.js";
+import { listTrips, listStations, saveTrip, deleteTrip, planRoute } from "./api.js";
 
 function mockFetch(body, ok = true) {
   const fetchMock = vi.fn().mockResolvedValue({ ok, json: async () => body });
@@ -58,5 +58,14 @@ describe("planRoute", () => {
       body: JSON.stringify({ from: "Christchurch", to: "Queenstown", stops: [] }),
     });
     expect(result.distanceKm).toBe(491);
+  });
+});
+
+describe("listStations", () => {
+  it("GETs /api/stations and returns the stations", async () => {
+    const fetchMock = mockFetch({ ok: true, stations: [{ id: "z-geraldine" }] });
+    const stations = await listStations();
+    expect(fetchMock).toHaveBeenCalledWith("/api/stations");
+    expect(stations).toEqual([{ id: "z-geraldine" }]);
   });
 });

@@ -40,3 +40,9 @@ export async function planRoute({ from, to, stops = [] }) {
   });
   return readJson(response);
 }
+
+export async function listStations() {
+  const response = await fetch("/api/stations");
+  const payload = await readJson(response);
+  return payload.stations;
+}
