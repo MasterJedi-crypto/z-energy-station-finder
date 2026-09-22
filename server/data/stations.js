@@ -40,7 +40,7 @@ export const stationSeeds = [
     lat: -43.59,
     lng: 172.38,
     price: 2.32,
-    services: ["toilets", "coffee", "24-7"],
+    services: ["toilets", "coffee", "24-7", "wifi", "truck-parking", "water"],
   },
   {
     id: "z-ashburton",
@@ -49,7 +49,7 @@ export const stationSeeds = [
     lat: -43.905,
     lng: 171.745,
     price: 2.26,
-    services: ["toilets", "coffee", "24-7", "truck-parking"],
+    services: ["toilets", "coffee", "24-7", "wifi", "truck-parking", "water"],
   },
   {
     id: "z-geraldine",
@@ -58,7 +58,7 @@ export const stationSeeds = [
     lat: -44.09,
     lng: 171.243,
     price: 2.35,
-    services: ["toilets", "coffee"],
+    services: ["toilets", "coffee", "car-wash", "atm"],
   },
   {
     id: "z-twizel",
@@ -67,7 +67,7 @@ export const stationSeeds = [
     lat: -44.258,
     lng: 170.098,
     price: 2.37,
-    services: ["toilets", "coffee", "24-7"],
+    services: ["toilets", "coffee", "24-7", "groceries"],
   },
   {
     id: "z-cromwell",
@@ -76,6 +76,6 @@ export const stationSeeds = [
     lat: -45.04,
     lng: 169.2,
     price: 2.33,
-    services: ["toilets", "coffee", "24-7", "ev"],
+    services: ["toilets", "coffee", "24-7", "ev", "tyre-air"],
   },
 ];

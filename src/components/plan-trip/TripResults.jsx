@@ -1,6 +1,6 @@
 import tripSaveHeart from "../../assets/figma/trip-save-heart.svg";
 
-export function TripResults({ trip, route, saved, onSave, onEdit, children, onStart }) {
+export function TripResults({ trip, route, saved, onSave, onStart, onEdit, children }) {
   return (
     <section className="relative mx-auto mt-6 flex max-w-[895px] flex-col gap-6 rounded-[10px] border border-[#A7A9AC] bg-white p-5 shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] lg:p-[25px]">
       <div>
@@ -20,23 +20,22 @@ export function TripResults({ trip, route, saved, onSave, onEdit, children, onSt
 
       {children}
 
+      <div className="flex flex-col items-center gap-3">
+        <button
+          type="button"
+          onClick={onSave}
+          disabled={saved}
+          className="flex h-[45px] w-full max-w-[237px] items-center justify-center gap-2 rounded-[8px] border border-z-orange bg-white font-bold text-z-black disabled:opacity-60"
+        >
+          <img src={tripSaveHeart} alt="" className="size-5" />
+          {saved ? "Trip saved" : "Save trip"}
+        </button>
         <button
           type="button"
           onClick={onStart}
           className="h-[45px] w-full max-w-[237px] rounded-[8px] bg-z-navy font-bold text-white"
         >
           Start my Trip
-        </button>
-
-      <div className="flex flex-col items-center gap-3">
-        <button
-          type="button"
-          onClick={onSave}
-          disabled={saved}
-          className="flex h-[45px] w-full max-w-[237px] items-center justify-center gap-2 rounded-[8px] border border-z-orange bg-white font-bold text-z-orange disabled:opacity-60"
-        >
-          <img src={tripSaveHeart} alt="" className="size-5" />
-          {saved ? "Trip saved" : "Save trip"}
         </button>
         <button
           type="button"

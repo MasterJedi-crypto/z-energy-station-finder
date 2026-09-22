@@ -19,8 +19,9 @@ import { stationsAlongRoute } from "../../lib/nzRoute";
 import { RecommendedStops } from "./RecommendedStops";
 import { googleMapsUrl, recommendStops } from "../../lib/tripStops";
 import { SelectedStops } from "./SelectedStops";
+import { TripMap } from "./TripMap";
 
-export function PlanTrip({ account, onNeedLogin }) {
+export function PlanTrip({ account, onNeedLogin, onBack }) {
   const userId = account?.userId;
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
@@ -157,7 +158,7 @@ export function PlanTrip({ account, onNeedLogin }) {
 
   return (
     <>
-      <TripHero />
+      <TripHero onBack={planned ? () => setPlanned(false) : onBack} />
       <div className="mx-auto max-w-[1440px] px-5 pb-16 lg:px-16">
         {planned ? (
           <>
@@ -173,6 +174,15 @@ export function PlanTrip({ account, onNeedLogin }) {
               onEdit={() => setPlanned(false)}
               onStart={handleStart}
             >
+                {route ? (
+                <TripMap
+                  route={route}
+                  stations={recommended}
+                  selectedIds={selectedIds}
+                  onToggle={toggleStop}
+                />
+              ) : null}
+            
               <RecommendedStops
                 stations={recommended}
                 selectedIds={selectedIds}
