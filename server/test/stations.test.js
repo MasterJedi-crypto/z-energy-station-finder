@@ -20,7 +20,7 @@ describe("GET /stations", () => {
     const response = await request(app).get("/stations");
     expect(response.status).toBe(200);
     expect(collection).toHaveBeenCalledWith("stations");
-    expect(response.body.stations).toHaveLength(3);
+    expect(response.body.stations).toHaveLength(stationSeeds.length); // change (koni)
     expect(response.body.stations).toEqual(expect.arrayContaining([
       expect.objectContaining({
         id: "z-vivian-st", name: "Z Vivian St",
