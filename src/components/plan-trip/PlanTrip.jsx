@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { deleteTrip, listTrips, planRoute, saveTrip } from "../../api";
+import {
+  deleteTrip,
+  listStations,
+  listTrips,
+  planRoute,
+  saveTrip,
+} from "../../api";
 import { SavedTrips } from "./SavedTrips";
 import { TripHero } from "./TripHero";
 import { TripFields } from "./TripFields";
@@ -9,6 +15,10 @@ import { CheapestToggle } from "./CheapestToggle";
 import { FUEL_TYPES } from "./serviceOptions";
 import { TripResults } from "./TripResults";
 import { TripSummaryBar } from "./TripSummaryBar";
+import { stationsAlongRoute } from "../../lib/nzRoute";
+import { RecommendedStops } from "./RecommendedStops";
+import { googleMapsUrl, recommendStops } from "../../lib/tripStops";
+import { SelectedStops } from "./SelectedStops";
 
 export function PlanTrip({ account, onNeedLogin }) {
   const userId = account?.userId;
@@ -24,6 +34,8 @@ export function PlanTrip({ account, onNeedLogin }) {
   const [planning, setPlanning] = useState(false);
   const [trips, setTrips] = useState([]);
   const [error, setError] = useState("");
+  const [routeStations, setRouteStations] = useState([]);
+  const [selectedIds, setSelectedIds] = useState([]);
 
   async function loadTrips() {
     if (!userId) {
@@ -47,6 +59,12 @@ export function PlanTrip({ account, onNeedLogin }) {
     );
   }
 
+  function toggleStop(id) {
+    setSelectedIds((current) =>
+      current.includes(id) ? current.filter((s) => s !== id) : [...current, id],
+    );
+  }
+
   async function handlePlan(event) {
     event.preventDefault();
     if (!from.trim() || !to.trim()) {
@@ -58,6 +76,22 @@ export function PlanTrip({ account, onNeedLogin }) {
     try {
       const result = await planRoute({ from, to, stops: stop ? [stop] : [] });
       setRoute(result);
+      const stations = await listStations();
+      console.log(
+        "path points:",
+        result.path?.length,
+        "stations:",
+        stations.length,
+      );
+      console.log(
+        stationsAlongRoute(result.path, stations, 1000).map((s) => [
+          s.name,
+          s.offKm.toFixed(1),
+        ]),
+      );
+      setRouteStations(stationsAlongRoute(result.path, stations));
+      setSelectedIds([]);
+
       setSaved(false);
       setPlanned(true);
     } catch (err) {
@@ -84,12 +118,26 @@ export function PlanTrip({ account, onNeedLogin }) {
         destination: route?.destination,
         distanceKm: route?.distanceKm,
         durationLabel: route?.durationLabel,
+        selectedStationIds: selectedIds,
       });
       setSaved(true);
       await loadTrips();
     } catch (err) {
       setError(err.message);
     }
+  }
+
+  function handleStart() {
+    const stops = stationsAlongRoute(
+      route.path,
+      [...(route.waypoints ?? []), ...selectedStations],
+      Infinity,
+    );
+    window.open(
+      googleMapsUrl(route.origin, route.destination, stops),
+      "_blank",
+      "noopener",
+    );
   }
 
   async function handleDelete(id) {
@@ -101,6 +149,11 @@ export function PlanTrip({ account, onNeedLogin }) {
       setError(err.message);
     }
   }
+
+  const recommended = recommendStops(routeStations, services, cheapest);
+  const selectedStations = routeStations.filter((s) =>
+    selectedIds.includes(s.id),
+  );
 
   return (
     <>
@@ -118,7 +171,18 @@ export function PlanTrip({ account, onNeedLogin }) {
               saved={saved}
               onSave={handleSave}
               onEdit={() => setPlanned(false)}
-            />
+              onStart={handleStart}
+            >
+              <RecommendedStops
+                stations={recommended}
+                selectedIds={selectedIds}
+                onToggle={toggleStop}
+              />
+              <SelectedStops
+                stations={selectedStations}
+                onRemove={toggleStop}
+              />
+            </TripResults>
           </>
         ) : (
           <form
@@ -139,7 +203,10 @@ export function PlanTrip({ account, onNeedLogin }) {
               services={services}
               onToggleService={toggleService}
             />
-            <OtherServices services={services} onToggleService={toggleService} />
+            <OtherServices
+              services={services}
+              onToggleService={toggleService}
+            />
             <CheapestToggle checked={cheapest} onChange={setCheapest} />
 
             <button
