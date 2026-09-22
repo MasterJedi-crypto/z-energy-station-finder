@@ -53,6 +53,8 @@ export function createStationsRouter(getCollection) {
           address: station.address,
           lat: station.lat,
           lng: station.lng,
+          price: station.price ?? null,   //changes added for my page (koni)
+          services: station.services ?? [],
           ...(hasOrigin ? {
             distanceKm: distanceKm(lat, lng, station.lat, station.lng),
           } : {}),
@@ -89,6 +91,8 @@ export function createStationsRouter(getCollection) {
             address: 1,
             lat: 1,
             lng: 1,
+            price: 1, // changes added (koni) for my page
+            services: 1,
           },
         }
       );
