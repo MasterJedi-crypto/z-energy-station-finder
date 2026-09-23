@@ -37,7 +37,7 @@ Users can find Z stations, view station details, plan a trip and manage saved tr
 - Node.js
 - Express
 - MongoDB
-- Mongoose
+- MongoDB Node.js driver
  
 ### Quality and Collaboration
  
