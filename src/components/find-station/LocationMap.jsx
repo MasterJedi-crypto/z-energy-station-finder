@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { icon } from "leaflet";
+import { canvas, icon } from "leaflet";
 import {
   MapContainer,
   Marker,
@@ -35,6 +35,7 @@ function FitResults({ places }) {
 
   return null;
 }
+
 export function LocationMap({ places, routePath = [] }) {
   const validPlaces = useMemo(
     () =>
@@ -93,10 +94,12 @@ export function LocationMap({ places, routePath = [] }) {
               point.lng,
             ])}
             pathOptions={{
-              color: "#28146f",
-              weight: 5,
-              opacity: 0.9,
-            }}
+             color: "#0066ff",
+             weight: 8,
+             opacity: 1,
+            lineCap: "round",
+            lineJoin: "round",
+      }}
           />
         )}
         {validPlaces.map((place) => (

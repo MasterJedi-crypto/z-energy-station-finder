@@ -71,9 +71,13 @@ export function StationDetails({ stationId, onBack }) {
 
     try {
       const result = await planRoute({
-        from,
-        to: station.address,
-      });
+  from,
+  to: {
+    label: station.address,
+    lat: station.lat,
+    lng: station.lng,
+  },
+});
 
       setRoute(result);
     } catch (routeRequestError) {
@@ -147,6 +151,40 @@ export function StationDetails({ stationId, onBack }) {
                 </p>
               </div>
 
+              {Number.isFinite(station.price) && (
+                <div className="rounded-xl bg-orange-50 p-5">
+                  <h3 className="text-xl font-bold text-gray-900">
+                    Fuel price
+                  </h3>
+
+                  <p className="mt-2 text-2xl font-bold text-[#f4510b]">
+                    ${station.price.toFixed(2)}
+                    <span className="ml-1 text-sm font-normal text-gray-600">
+                      per litre
+                    </span>
+                  </p>
+                </div>
+              )}
+              {Array.isArray(station.services) &&
+                station.services.length > 0 && (
+                  <div>
+                    <h3 className="mb-3 text-xl font-bold">
+                      Services available
+                    </h3>
+
+                    <div className="flex flex-wrap gap-2">
+                      {station.services.map((service) => (
+                        <span
+                          key={service}
+                          className="rounded-full border border-[#28146f] bg-white px-4 py-2 text-sm font-semibold capitalize text-[#28146f]"
+                        >
+                          {service.replaceAll("-", " ")}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
               <div>
                 <h3 className="mb-2 text-xl font-bold">
                   Coordinates
@@ -180,7 +218,7 @@ export function StationDetails({ stationId, onBack }) {
                     onChange={(event) =>
                       setStartingLocation(event.target.value)
                     }
-                    placeholder="Enter your starting location"
+                    placeholder="Street, suburb, city or postcode"
                     className="min-w-0 flex-1 rounded-lg border border-gray-300 px-4 py-3 text-gray-900"
                   />
 
