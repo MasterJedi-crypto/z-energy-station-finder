@@ -43,8 +43,7 @@ export function StationDetails({ stationId, onBack }) {
           setLoading(false);
         }
       }
-    }
-      
+    }      
     if (stationId) {
       loadStation();
     } else {
@@ -66,7 +65,6 @@ export function StationDetails({ stationId, onBack }) {
       setRouteError("Enter your starting location.");
       return;
     }
-
     setRouteLoading(true);
     setRouteError("");
     setRoute(null);
