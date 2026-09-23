@@ -3,6 +3,7 @@ import { icon } from "leaflet";
 import {
   MapContainer,
   Marker,
+  Polyline,
   Popup,
   TileLayer,
   useMap,
@@ -34,8 +35,7 @@ function FitResults({ places }) {
 
   return null;
 }
-
-export function LocationMap({ places }) {
+export function LocationMap({ places, routePath = [] }) {
   const validPlaces = useMemo(
     () =>
       places.filter(
@@ -48,11 +48,27 @@ export function LocationMap({ places }) {
     [places]
   );
 
-  if (validPlaces.length === 0) {
+  const validRoutePath = useMemo(
+    () =>
+      routePath.filter(
+        (point) =>
+          Number.isFinite(point?.lat) &&
+          Number.isFinite(point?.lng) &&
+          Math.abs(point.lat) <= 90 &&
+          Math.abs(point.lng) <= 180
+      ),
+    [routePath]
+  );
+
+  const mapPoints = useMemo(
+    () => [...validPlaces, ...validRoutePath],
+    [validPlaces, validRoutePath]
+  );
+
+  if (mapPoints.length === 0) {
     return <p>No valid coordinates are available to display.</p>;
   }
-
-  return (
+    return (
     <section
       aria-label="Map of search locations"
       className="relative z-0 h-[360px] min-w-0 overflow-hidden rounded-md border border-gray-300 lg:h-[440px]"
@@ -69,8 +85,20 @@ export function LocationMap({ places }) {
           maxZoom={19}
         />
 
-        <FitResults places={validPlaces} />
-
+        <FitResults places={mapPoints} />
+        {validRoutePath.length > 1 && (
+          <Polyline
+            positions={validRoutePath.map((point) => [
+              point.lat,
+              point.lng,
+            ])}
+            pathOptions={{
+              color: "#28146f",
+              weight: 5,
+              opacity: 0.9,
+            }}
+          />
+        )}
         {validPlaces.map((place) => (
           <Marker
             key={`${place.label}-${place.lat}-${place.lng}`}
