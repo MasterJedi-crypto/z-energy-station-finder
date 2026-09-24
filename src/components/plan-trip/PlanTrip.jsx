@@ -222,9 +222,9 @@ export function PlanTrip({ account, onNeedLogin, onBack }) {
             <button
               type="submit"
               disabled={planning}
-              className="mx-auto h-[42px] w-full max-w-[237px] rounded-[8px] bg-z-navy text-[16px] font-bold text-white disabled:opacity-60"
+                className="mx-auto h-[45px] w-full rounded-[8px] bg-z-orange text-[16px] font-bold text-white disabled:opacity-60 lg:h-[42px] lg:max-w-[237px] lg:bg-z-navy"
             >
-              {planning ? "Planning…" : "Plan my Trip"}
+              {planning ? "Planning…" : "Start my Trip"}
             </button>
           </form>
         )}
