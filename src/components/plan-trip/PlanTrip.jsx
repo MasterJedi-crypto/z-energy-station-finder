@@ -76,23 +76,14 @@ export function PlanTrip({ account, onNeedLogin, onBack }) {
     setPlanning(true);
     try {
       const result = await planRoute({ from, to, stops: stop ? [stop] : [] });
-      setRoute(result);
+      if (!result.path?.length) {
+        setError("We couldn't map that route. Try different place names.");
+        return;
+      }
       const stations = await listStations();
-      console.log(
-        "path points:",
-        result.path?.length,
-        "stations:",
-        stations.length,
-      );
-      console.log(
-        stationsAlongRoute(result.path, stations, 1000).map((s) => [
-          s.name,
-          s.offKm.toFixed(1),
-        ]),
-      );
+      setRoute(result);
       setRouteStations(stationsAlongRoute(result.path, stations));
       setSelectedIds([]);
-
       setSaved(false);
       setPlanned(true);
     } catch (err) {
@@ -171,10 +162,10 @@ export function PlanTrip({ account, onNeedLogin, onBack }) {
               route={route}
               saved={saved}
               onSave={handleSave}
-              onEdit={() => setPlanned(false)}
               onStart={handleStart}
+              onEdit={() => setPlanned(false)}
             >
-                {route ? (
+              {route ? (
                 <TripMap
                   route={route}
                   stations={recommended}
@@ -182,7 +173,6 @@ export function PlanTrip({ account, onNeedLogin, onBack }) {
                   onToggle={toggleStop}
                 />
               ) : null}
-            
               <RecommendedStops
                 stations={recommended}
                 selectedIds={selectedIds}
@@ -222,7 +212,7 @@ export function PlanTrip({ account, onNeedLogin, onBack }) {
             <button
               type="submit"
               disabled={planning}
-                className="mx-auto h-[45px] w-full rounded-[8px] bg-z-orange text-[16px] font-bold text-white disabled:opacity-60 lg:h-[42px] lg:max-w-[237px] lg:bg-z-navy"
+              className="mx-auto h-[45px] w-full rounded-[8px] bg-z-orange text-[16px] font-bold text-white disabled:opacity-60 lg:h-[42px] lg:max-w-[237px] lg:bg-z-navy"
             >
               {planning ? "Planning…" : "Start my Trip"}
             </button>
