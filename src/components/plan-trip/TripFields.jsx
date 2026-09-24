@@ -1,4 +1,5 @@
 import tripFieldPin from "../../assets/figma/trip-field-pin.svg";
+import { NZ_TOWNS } from "./nzTowns";
 
 const labelClass = "text-[16px] font-bold text-[#353535] lg:text-[20px]";
 const inputClass =
@@ -15,6 +16,7 @@ function PlaceField({ label, value, onChange, placeholder }) {
           className="pointer-events-none absolute left-[10px] top-1/2 size-6 -translate-y-1/2"
         />
         <input
+          list="nz-towns"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
@@ -25,12 +27,29 @@ function PlaceField({ label, value, onChange, placeholder }) {
   );
 }
 
-export function TripFields({ from, to, stop, onFromChange, onToChange, onStopChange }) {
+export function TripFields({
+  from,
+  to,
+  stop,
+  onFromChange,
+  onToChange,
+  onStopChange,
+}) {
   return (
     <div className="flex flex-col gap-6">
       <div className="grid gap-4 lg:grid-cols-2 lg:gap-[34px]">
-        <PlaceField label="From" value={from} onChange={onFromChange} placeholder="Current location" />
-        <PlaceField label="To" value={to} onChange={onToChange} placeholder="Destination" />
+        <PlaceField
+          label="From"
+          value={from}
+          onChange={onFromChange}
+          placeholder="Current location"
+        />
+        <PlaceField
+          label="To"
+          value={to}
+          onChange={onToChange}
+          placeholder="Destination"
+        />
       </div>
       <label className="flex flex-col gap-2">
         <span className={labelClass}>
@@ -43,6 +62,11 @@ export function TripFields({ from, to, stop, onFromChange, onToChange, onStopCha
           className={`${inputClass} px-[21px]`}
         />
       </label>
+      <datalist id="nz-towns">
+        {NZ_TOWNS.map((town) => (
+          <option key={town} value={town} />
+        ))}
+      </datalist>
     </div>
   );
 }

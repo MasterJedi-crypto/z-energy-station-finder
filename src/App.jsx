@@ -171,7 +171,7 @@ function App() {
         ) : page === "station-details" ? (
           <StationDetails stationId={selectedStationId} onBack={goFindStation} />
         ) : page === "plan-trip" ? (
-        <PlanTrip account={session} onNeedLogin={goBusinessLogin} />
+        <PlanTrip account={session} onNeedLogin={goBusinessLogin} onBack={goFindStation} />
         ) : (
           <>
             <Hero onFindStation={goFindStation} />

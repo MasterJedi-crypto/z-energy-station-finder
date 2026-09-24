@@ -10,7 +10,7 @@ export function TripPreferences({ fuelType, onFuelTypeChange, services, onToggle
       <p className="text-[18px] font-bold text-[#353535]">Your preferences</p>
       <p className="text-[12px] text-[#353535]">Based on your previous selection</p>
 
-      <div className="mt-4 flex items-center gap-4">
+      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
         <span className={rowLabel}>Fuel type</span>
         <label className="relative flex-1 lg:max-w-[262px]">
           <img
@@ -22,7 +22,7 @@ export function TripPreferences({ fuelType, onFuelTypeChange, services, onToggle
             value={fuelType}
             onChange={(e) => onFuelTypeChange(e.target.value)}
             aria-label="Fuel type"
-            className="h-[45px] w-full appearance-none rounded-[4px] border border-[#58595B] bg-white pl-12 pr-4 text-[16px] text-[#353535]"
+            className="h-[45px] w-full appearance-none rounded-[4px] border border-[#58595B] bg-white pl-12 pr-2 text-[14px] text-[#353535]"
           >
             {FUEL_TYPES.map((fuel) => (
               <option key={fuel}>{fuel}</option>
@@ -31,9 +31,9 @@ export function TripPreferences({ fuelType, onFuelTypeChange, services, onToggle
         </label>
       </div>
 
-      <div className="mt-4 flex items-center gap-4">
+      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
         <span className={rowLabel}>Service type</span>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-3">
           {PREFERENCE_SERVICES.map((service) => (
             <ServiceTile
               key={service.id}

@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { deleteTrip, listTrips, planRoute, saveTrip } from "../../api";
+import {
+  deleteTrip,
+  listStations,
+  listTrips,
+  planRoute,
+  saveTrip,
+} from "../../api";
 import { SavedTrips } from "./SavedTrips";
 import { TripHero } from "./TripHero";
 import { TripFields } from "./TripFields";
@@ -9,8 +15,13 @@ import { CheapestToggle } from "./CheapestToggle";
 import { FUEL_TYPES } from "./serviceOptions";
 import { TripResults } from "./TripResults";
 import { TripSummaryBar } from "./TripSummaryBar";
+import { stationsAlongRoute } from "../../lib/nzRoute";
+import { RecommendedStops } from "./RecommendedStops";
+import { googleMapsUrl, recommendStops } from "../../lib/tripStops";
+import { SelectedStops } from "./SelectedStops";
+import { TripMap } from "./TripMap";
 
-export function PlanTrip({ account, onNeedLogin }) {
+export function PlanTrip({ account, onNeedLogin, onBack }) {
   const userId = account?.userId;
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
@@ -24,6 +35,8 @@ export function PlanTrip({ account, onNeedLogin }) {
   const [planning, setPlanning] = useState(false);
   const [trips, setTrips] = useState([]);
   const [error, setError] = useState("");
+  const [routeStations, setRouteStations] = useState([]);
+  const [selectedIds, setSelectedIds] = useState([]);
 
   async function loadTrips() {
     if (!userId) {
@@ -47,6 +60,12 @@ export function PlanTrip({ account, onNeedLogin }) {
     );
   }
 
+  function toggleStop(id) {
+    setSelectedIds((current) =>
+      current.includes(id) ? current.filter((s) => s !== id) : [...current, id],
+    );
+  }
+
   async function handlePlan(event) {
     event.preventDefault();
     if (!from.trim() || !to.trim()) {
@@ -57,7 +76,14 @@ export function PlanTrip({ account, onNeedLogin }) {
     setPlanning(true);
     try {
       const result = await planRoute({ from, to, stops: stop ? [stop] : [] });
+      if (!result.path?.length) {
+        setError("We couldn't map that route. Try different place names.");
+        return;
+      }
+      const stations = await listStations();
       setRoute(result);
+      setRouteStations(stationsAlongRoute(result.path, stations));
+      setSelectedIds([]);
       setSaved(false);
       setPlanned(true);
     } catch (err) {
@@ -84,12 +110,26 @@ export function PlanTrip({ account, onNeedLogin }) {
         destination: route?.destination,
         distanceKm: route?.distanceKm,
         durationLabel: route?.durationLabel,
+        selectedStationIds: selectedIds,
       });
       setSaved(true);
       await loadTrips();
     } catch (err) {
       setError(err.message);
     }
+  }
+
+  function handleStart() {
+    const stops = stationsAlongRoute(
+      route.path,
+      [...(route.waypoints ?? []), ...selectedStations],
+      Infinity,
+    );
+    window.open(
+      googleMapsUrl(route.origin, route.destination, stops),
+      "_blank",
+      "noopener",
+    );
   }
 
   async function handleDelete(id) {
@@ -102,9 +142,14 @@ export function PlanTrip({ account, onNeedLogin }) {
     }
   }
 
+  const recommended = recommendStops(routeStations, services, cheapest);
+  const selectedStations = routeStations.filter((s) =>
+    selectedIds.includes(s.id),
+  );
+
   return (
     <>
-      <TripHero />
+      <TripHero onBack={planned ? () => setPlanned(false) : onBack} />
       <div className="mx-auto max-w-[1440px] px-5 pb-16 lg:px-16">
         {planned ? (
           <>
@@ -117,8 +162,27 @@ export function PlanTrip({ account, onNeedLogin }) {
               route={route}
               saved={saved}
               onSave={handleSave}
+              onStart={handleStart}
               onEdit={() => setPlanned(false)}
-            />
+            >
+              {route ? (
+                <TripMap
+                  route={route}
+                  stations={recommended}
+                  selectedIds={selectedIds}
+                  onToggle={toggleStop}
+                />
+              ) : null}
+              <RecommendedStops
+                stations={recommended}
+                selectedIds={selectedIds}
+                onToggle={toggleStop}
+              />
+              <SelectedStops
+                stations={selectedStations}
+                onRemove={toggleStop}
+              />
+            </TripResults>
           </>
         ) : (
           <form
@@ -139,15 +203,18 @@ export function PlanTrip({ account, onNeedLogin }) {
               services={services}
               onToggleService={toggleService}
             />
-            <OtherServices services={services} onToggleService={toggleService} />
+            <OtherServices
+              services={services}
+              onToggleService={toggleService}
+            />
             <CheapestToggle checked={cheapest} onChange={setCheapest} />
 
             <button
               type="submit"
               disabled={planning}
-              className="mx-auto h-[42px] w-full max-w-[237px] rounded-[8px] bg-z-navy text-[16px] font-bold text-white disabled:opacity-60"
+              className="mx-auto h-[45px] w-full rounded-[8px] bg-z-orange text-[16px] font-bold text-white disabled:opacity-60 lg:h-[42px] lg:max-w-[237px] lg:bg-z-navy"
             >
-              {planning ? "Planning…" : "Plan my Trip"}
+              {planning ? "Planning…" : "Start my Trip"}
             </button>
           </form>
         )}
