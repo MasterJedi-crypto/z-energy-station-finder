@@ -86,12 +86,67 @@ export function FindStation({ onBack, onSelectStation, onPlanTrip }) {
         </form>
        </section>
 
-      <div className="mx-auto grid max-w-[1440px] px-6 pt-6 lg:grid-cols-4 lg:gap-x-[30px] lg:px-20">
-        <div className="lg:col-start-4">
-          <TripPlannerButton onPlanTrip={onPlanTrip} />
-        </div>
-      </div>
+      <section className="border-b border-gray-200 bg-white">
+  <div className="mx-auto grid max-w-[1440px] gap-4 px-6 py-5 sm:grid-cols-2 lg:grid-cols-4 lg:px-20">
+    <label className="block font-semibold text-[#252525]">
+      Fuel type
 
+      <select
+        defaultValue=""
+        className="mt-2 w-full rounded-md border border-gray-300 bg-white px-4 py-3 font-normal text-gray-700"
+      >
+        <option value="" disabled>
+          Select fuel type
+        </option>
+        <option value="all">All fuel types</option>
+        <option value="zx-premium">ZX Premium</option>
+        <option value="z91">Z91 Unleaded</option>
+        <option value="diesel">Z Diesel</option>
+      </select>
+    </label>
+
+    <label className="block font-semibold text-[#252525]">
+      Services
+
+      <select
+        defaultValue=""
+        className="mt-2 w-full rounded-md border border-gray-300 bg-white px-4 py-3 font-normal text-gray-700"
+      >
+        <option value="" disabled>
+          Service station
+        </option>
+        <option value="all">All services</option>
+        <option value="toilets">Toilets</option>
+        <option value="coffee">Coffee</option>
+        <option value="24-7">24/7</option>
+        <option value="truck-parking">Truck parking</option>
+      </select>
+    </label>
+
+    <label className="block font-semibold text-[#252525]">
+      Sort by
+
+      <select
+        defaultValue="distance"
+        className="mt-2 w-full rounded-md border border-gray-300 bg-white px-4 py-3 font-normal text-gray-700"
+      >
+        <option value="distance">Distance</option>
+        <option value="price-low">Price: low to high</option>
+        <option value="price-high">Price: high to low</option>
+      </select>
+    </label>
+
+    <div>
+      <p className="font-semibold text-[#252525]">
+        Trip Planner
+      </p>
+
+      <div className="mt-2">
+        <TripPlannerButton onPlanTrip={onPlanTrip} />
+      </div>
+    </div>
+  </div>
+</section>
 
       <section className="mx-auto max-w-6xl px-6 py-10 lg:px-20" aria-busy={loading}>
         <p className="mb-5 text-sm text-gray-600">
